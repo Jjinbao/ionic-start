@@ -1,0 +1,39 @@
+<ion-view view-title="学习列表">
+  <ion-content has-header="true" padding="true">
+    <div>
+      <ul class="list">
+        <li class="item item-toggle">
+          我要模拟考试
+          <label class="toggle toggle-positive">
+            <input type="checkbox">
+
+            <div class="track">
+              <div class="handle"></div>
+            </div>
+          </label>
+        </li>
+      </ul>
+    </div>
+
+    <div style="margin-top:10px;">
+      <ion-list>
+        <div ng-repeat="group in groups" style="margin-top: 10px;">
+          <ion-item class="item-stable item-icon-right item-calm"
+                    ng-click="toggleGroup(group)"
+                    ng-class="{active: isGroupShown(group)}">
+            <i class="icon" ng-class="isGroupShown(group) ? 'ion-ios-minus-empty' : 'ion-ios-plus-empty'"></i>
+            &nbsp;
+            {{(group.name=='L') ? '听力列表':'口语列表'}}
+          </ion-item>
+          <ion-item class="item-accordion item-icon-right"
+                    ng-click="choiceTpo(group.name,item)"
+                    ng-repeat="item in group.items"
+                    ng-show="isGroupShown(group)">
+            TPO {{item}}
+            <i class="icon ion-ios-arrow-right"></i>
+          </ion-item>
+        </div>
+      </ion-list>
+    </div>
+  </ion-content>
+</ion-view>
