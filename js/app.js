@@ -1,6 +1,12 @@
-angular.module('ionicApp', ['ionic', 'app.controllers','toefl.service'])
+angular.module('ionicApp', ['ionic', 'app.controllers', 'toefl.service'])
 
-  .config(['$ionicConfigProvider', function($ionicConfigProvider){
+  .run(['$rootScope', '$state', '$stateParams',
+    function ($rootScope, $state, $stateParams) {
+      $rootScope.$state = $state;
+      $rootScope.$stateParams = $stateParams;
+    }])
+
+  .config(['$ionicConfigProvider', function($ionicConfigProvider) {
     $ionicConfigProvider.platform.ios.tabs.style('standard');
     $ionicConfigProvider.platform.ios.tabs.position('bottom');
     $ionicConfigProvider.platform.android.tabs.style('standard');
@@ -49,6 +55,36 @@ angular.module('ionicApp', ['ionic', 'app.controllers','toefl.service'])
           }
         }
       })
+      .state('tabs.listen-page', {
+        url: "/listen-page",
+        views: {
+          'list-tab': {
+            templateUrl: "templates/listen-page.html",
+            controller:'listenQuestionPage'
+          }
+        }
+      })
+      .state('tabs.listen-page.son', {
+        url: "/:tid",
+        views: {
+          'listen-material': {
+            template:'<div>111<audio src="https://fire.meten.cn/system/files/attachments/questionSound/2uFNy32bcLRkmORUHwSk7JAE.mp3" autoplay></audio></div>',
+            controller:'listenMaterialCtrl'
+            //templateUrl: "templates/listen-material.html"
+
+          },
+          'answer-question': {
+            template:'<div>222<audio src="https://fire.meten.cn/system/files/attachments/sound/ltmdL_brNJQMg4xQwagQyNLn.mp3" autoplay></audio></div>',
+            controller:'answerQuestionctrl'
+            //templateUrl: "templates/answer-question.html"
+          },
+          'answer-type': {
+            template:'<div>333<audio src="https://fire.meten.cn/system/files/attachments/questionSound/NRXdJg4sEEtA1v_5A1QKyx_j.mp3" autoplay></audio></div>'
+            //templateUrl: "templates/answer-question.html"
+          }
+
+        }
+      })
       .state('tabs.speak-list', {
         url: "/speak-list",
         views: {
@@ -64,21 +100,21 @@ angular.module('ionicApp', ['ionic', 'app.controllers','toefl.service'])
 
   /*root controller*/
   .controller('rootTabCtrl', ['$scope', function($scope) {
-    $scope.tpoNo='list';
-    $scope.$on('from.list',function(evt,data){
-      $scope.topNo='TPO '+data;
+    $scope.tpoNo = 'list';
+    $scope.$on('from.list', function(evt, data) {
+      $scope.topNo = 'TPO ' + data;
     })
 
   }])
 
   /*home controller*/
-  .controller('homeCtrl',['$scope',function($scope){
+  .controller('homeCtrl', ['$scope', function($scope) {
 
   }])
 
   /*list controller*/
   .controller('listCtrl', ['$scope', '$state', function($scope, $state) {
-    $scope.topNo='';
+    $scope.topNo = '';
     $scope.groups = [];
     $scope.groups[0] = {
       name: 'L',
@@ -104,10 +140,10 @@ angular.module('ionicApp', ['ionic', 'app.controllers','toefl.service'])
     $scope.choiceTpo = function(type, index) {
       console.log(type);
       console.log(index);
-      $scope.$emit('from.list',index);
-      if(type=='L'){
+      $scope.$emit('from.list', index);
+      if (type == 'L') {
         $state.go('tabs.listen-list', {tid: index});
-      }else{
+      } else {
         $state.go('tabs.speak-list', {tid: index});
       }
     }

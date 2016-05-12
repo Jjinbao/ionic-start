@@ -1,8 +1,8 @@
 angular.module('app.controllers', [])
 
   /*听力列表controller*/
-  .controller('tpoListenList', ['$scope', '$ionicHistory', '$stateParams',
-    function($scope, $ionicHistory) {
+  .controller('tpoListenList', ['$scope', '$ionicHistory','$state',
+    function($scope, $ionicHistory,$state) {
 
       $scope.listenSectionList = [
         {name:'Conversation 1',id:'C1'},
@@ -15,10 +15,44 @@ angular.module('app.controllers', [])
       $scope.goBack = function() {
         $ionicHistory.goBack();
       }
+
+      $scope.startListen=function(id){
+        $state.go('tabs.listen-page.son',{qid:id});
+      }
     }])
+
+  .controller('listenQuestionPage',['$scope','$ionicHistory','$compile','$interval','$rootScope',
+    function($scope,$ionicHistory,$compile,$interval,$rootScope){
+      console.log($rootScope.$stateParams.tid);
+      console.log($rootScope.$stateParams.qid);
+      $scope.numbers=0;
+      $scope.array=['listen-material','answer-question','answer-type','listen-material','answer-question','answer-type','listen-material','answer-question','answer-type','listen-material','answer-question','answer-type'];
+
+      $scope.timer=$interval(function(){
+        $scope.numbers++;
+        //$scope.nowView=$scope.array[$scope.numbers];
+        var query=angular.element(document.querySelector('#view'));
+        $compile(angular.element(query).attr('ui-view',$scope.array[$scope.numbers]))($scope);
+
+      },5000);
+
+      $scope.goBack=function(){
+        console.log($ionicHistory.viewHistory());
+        $ionicHistory.goBack();
+      }
+  }])
+  .controller('listenMaterialCtrl',['$scope','$ionicHistory',function($scope,$ionicHistory){
+
+
+  }])
+  .controller('answerQuestionctrl',['$scope','$ionicHistory',function($scope,$ionicHistory){
+
+
+  }])
   /*口语列表控制器*/
-  .controller('tpoSpeakList', ['$scope', '$ionicHistory', '$stateParams',
-    function($scope, $ionicHistory) {
+  .controller('tpoSpeakList', ['$scope', '$ionicHistory','$location',
+    function($scope, $ionicHistory,$location) {
+      console.log($location.url());
 
       $scope.speakSectionList = [
         {name:'Question 1',id:'1'},
@@ -32,5 +66,8 @@ angular.module('app.controllers', [])
         $ionicHistory.goBack();
       }
     }])
+  .controller('answerPageCtrl',['$scope',function($scope){
+    console.log('33333333333333333');
+  }])
 
 

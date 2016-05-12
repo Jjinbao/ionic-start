@@ -5,15 +5,7 @@
     </button>
   </ion-nav-buttons>
   <ion-content has-header="true" padding="true">
-    <div style="margin-top:10px;">
-      <ion-list>
-        <ion-item class="item-accordion item-icon-right"
-                  ng-click="startListen(item.id)"
-                  ng-repeat="item in listenSectionList">
-          {{item.name}}
-          <i class="icon ion-ios-arrow-right"></i>
-        </ion-item>
-      </ion-list>
-    </div>
+    <div id="view" ui-view="listen-material"></div>
+    <button class="button button-balanced" ng-click="refresh()">刷新视图</button>
   </ion-content>
 </ion-view>
