@@ -19,7 +19,7 @@ angular.module('toefl.service', ['ngResource'])
 
     function retrieve_by_uuid(uuid) {
       // @todo
-      return $resource('resource/listen.json', {uuid: uuid})
+      return $resource('http://localhost:3000/:uuid', {uuid: uuid})
        //return $resource('resource/listening.json', null)
         .get(null, function(value) {
           if (value && value.uuid) {

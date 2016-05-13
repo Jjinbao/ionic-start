@@ -1,101 +1,131 @@
-angular.module('app.controllers', ['checklist-model'])
+'use strict';
 
-  /*听力列表controller*/
-  .controller('tpoListenList', ['$scope', '$ionicHistory','$state',
-    function($scope, $ionicHistory,$state) {
+angular.module('toefl.utils', ['ngAudio'])
 
-      $scope.listenSectionList = [
-        {name:'Conversation 1',id:'C1'},
-        {name:'Lecture 1',id:'L1'},
-        {name:'Lecture 2',id:'L2'},
-        {name:'Conversation 2',id:'C2'},
-        {name:'Lecture 3',id:'L3'},
-        {name:'Lecture 4',id:'L4'}
-      ];
-      $scope.goBack = function() {
-        $ionicHistory.goBack();
-      }
+  .directive('toeflSound', ['ngAudio', function(ngAudio) {
+    return {
+      restrict: 'E',
+      scope: {
+        resource: '<',      // An expression containing the url to the sound file.
+        autoPlay: '@',      // string: 'true' or 'false'
+        completeEvent: '@', // string: event name.
+        complete: '&'       // A function expression.
+      },
 
-      $scope.startListen=function(id){
-        $state.go('tabs.listen-page.son',{template:'listen-to-material'});
-      }
-    }])
+      link: function($scope, element, attrs) {
+        var sound;
+        $scope.$watch('resource', function(value) {
+          if (value) {
+            sound = ngAudio.load(value);
 
-  .controller('listenQuestionPage',['$scope','$ionicHistory','$compile','sectionService','$state',
-    function($scope,$ionicHistory,$compile,sectionService,$state){
-      $scope.section=sectionService.section;
-      $scope.sences=['listen-to-material'];
+            $scope.autoPlay = attrs.autoPlay ? angular.fromJson(attrs.autoPlay) : true;
+            if ($scope.autoPlay) {
+              sound.play();
+            }
 
-      $scope.$watchCollection('section',function(newVal){
-        if(newVal.uuid){
-          $scope.unit=newVal.units[0];
-          $scope.question=newVal.units[0].questions[0];
-          $scope.sences=make_up_route_sequence($scope.section);
-          //$scope.initView();
-        }
-      });
-      sectionService.retrieve('listensection');
-
-      /*显示题干，开始做题*/
-      $scope.showQuestionBody = false;
-      $scope.$on('question.sound-complete', function() {
-        $scope.showQuestionBody = true;
-      });
-      $scope.numbers=-1;
-      //最开始初始化界面
-      $scope.initView=function(){
-        //$scope.numbers++;
-        //angular.element(document).ready(function(){
-        //  var viewEle=angular.element(document.querySelector('#view'));
-        //  $compile(angular.element(viewEle).attr('ui-view',$scope.sences[$scope.numbers]))($scope);
-        //})
-      }
-
-      $scope.back=function(){
-        //@todo
-      }
-
-      $scope.continue=function(){
-        $state.go('tabs.listen-page.son',{template:'listen/question'});
-        //$scope.question=$scope.section.units[0].questions[2];
-        //$scope.showQuestionBody = false;
-        //$scope.numbers++;
-      }
-
-      $scope.goBack=function(){
-        console.log($ionicHistory.viewHistory());
-        $ionicHistory.goBack();
-      }
-
-      function route_according_to_sequence(obj) {
-        if (obj instanceof ToeflListeningUnit) {
-          $scope.unit = obj;
-          $location.path('/listening/listen-to-material');
-        }
-      }
-
-      function make_up_route_sequence(section) {
-        var sequence = [];
-        /*if (section.directions) {
-          sequence.push('/listening/directions');
-          toolbar_buttons.push({continue: true});
-        }
-        if (section.putOnHeadsetNotice) {
-          sequence.push('/listening/put-on-headset');
-          toolbar_buttons.push({continue: true});
-        }*/
-        angular.forEach(section.units, function(unit) {
-          sequence.push(unit);
-          //sequence.push('/listening/ready-to-answer');
-          angular.forEach(unit.questions, function(question) {
-            sequence.push('answer-question');
-          })
+            sound.complete(function() {
+              sound.unbind();
+              if (attrs.completeEvent) {
+                $scope.$emit(attrs.completeEvent);
+              }
+              if ($scope.complete) {
+                $scope.complete();
+              }
+            });
+          }
         });
-        return sequence;
+
+        $scope.$on('$destroy', function() {
+          if (sound) {
+            sound.pause();
+            delete sound.audio;
+          }
+        });
       }
+    };
   }])
 
-  .directive('toeflClock', ['$interval', function($interval) {
+  .directive('toeflListeningMaterial', ['ngAudio', '$interval', function(ngAudio, $interval) {
+    return {
+      restrict: 'CE',
+      scope: {
+        scene: '<',
+        sound: '<',
+        completeEvent: '@',
+        complete: '&'
+      },
+      templateUrl: 'templates/toefl-listening-material.html',
+
+      link: function($scope, element) {
+        $scope.progress = 0.0;
+
+        var sound;
+        var intervalId;
+        $scope.$watch('sound', function(value) {
+          if (value) {
+            sound = ngAudio.load(value);
+          }
+        });
+
+        $scope.$watch('scene', function(value) {
+          if (value) {
+            element.find('img').on('load', function() {
+              if (sound) {
+                sound.play();
+                intervalId = $interval(function() {
+                  $scope.progress = sound.progress;
+                }, 500);
+
+                sound.complete(function() {
+                  $scope.progress = 1.0;
+                  $interval.cancel(intervalId);
+                  intervalId = null;
+
+                  sound.unbind();
+                  if ($scope.completeEvent) {
+                    $scope.$emit($scope.completeEvent);
+                  }
+                  if ($scope.complete) {
+                    $scope.complete();
+                  }
+                });
+              }
+            });
+          }
+        });
+
+        $scope.$on('$destroy', function() {
+          if (sound) {
+            sound.pause();
+            delete sound.audio;
+          }
+          if (intervalId) {
+            $interval.cancel(intervalId);
+          }
+        });
+      }
+    };
+  }])
+
+  /*.directive('toeflToolbar', [function() {
+    return {
+      restrict: 'C',
+      scope: false,
+      templateUrl: 'templates/toefl-toolbar.html',
+
+      compile: function(element) {
+        var buttons = angular.element(element).find('button');
+        angular.forEach(buttons, function(btn) {
+          btn = angular.element(btn);
+          var btn_name = btn.attr('name');
+          btn.attr('ng-show', "toolbar.hasOwnProperty('" + btn_name + "')")
+            .attr('ng-disabled', 'toolbar.' + btn_name + '===false');
+        })
+      }
+    };
+  }])*/
+
+  /*.directive('toeflClock', ['$interval', function($interval) {
     return {
       restrict: 'CE',
       templateUrl: 'templates/toefl-clock.html',
@@ -247,35 +277,4 @@ angular.module('app.controllers', ['checklist-model'])
         }
       }
     };
-  }])
-
-  .controller('listenMaterialCtrl',['$scope','$ionicHistory',function($scope,$ionicHistory){
-
-
-  }])
-  .controller('answerQuestionctrl',['$scope','$ionicHistory',function($scope,$ionicHistory){
-
-
-  }])
-  /*口语列表控制器*/
-  .controller('tpoSpeakList', ['$scope', '$ionicHistory','$location',
-    function($scope, $ionicHistory,$location) {
-      console.log($location.url());
-
-      $scope.speakSectionList = [
-        {name:'Question 1',id:'1'},
-        {name:'Question 2',id:'2'},
-        {name:'Question 3',id:'3'},
-        {name:'Question 4',id:'4'},
-        {name:'Question 5',id:'5'},
-        {name:'Question 6',id:'6'}
-      ];
-      $scope.goBack = function() {
-        $ionicHistory.goBack();
-      }
-    }])
-  .controller('answerPageCtrl',['$scope',function($scope){
-    console.log('33333333333333333');
-  }])
-
-
+  }]);*/

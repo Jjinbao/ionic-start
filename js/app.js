@@ -1,4 +1,4 @@
-angular.module('ionicApp', ['ionic', 'app.controllers', 'toefl.service'])
+angular.module('ionicApp', ['ionic', 'app.controllers', 'toefl.service','toefl.utils'])
 
   .run(['$rootScope', '$state', '$stateParams',
     function ($rootScope, $state, $stateParams) {
@@ -65,23 +65,21 @@ angular.module('ionicApp', ['ionic', 'app.controllers', 'toefl.service'])
         }
       })
       .state('tabs.listen-page.son', {
-        url: "/:tid",
+        url: "/:template",
         views: {
           'listen-material': {
-            template:'<div>111<audio src="https://fire.meten.cn/system/files/attachments/questionSound/2uFNy32bcLRkmORUHwSk7JAE.mp3" autoplay></audio></div>',
+            templateUrl:function(routeParams){
+              return 'templates/'+routeParams.template+'.html'
+            },
             controller:'listenMaterialCtrl'
             //templateUrl: "templates/listen-material.html"
 
-          },
-          'answer-question': {
-            template:'<div>222<audio src="https://fire.meten.cn/system/files/attachments/sound/ltmdL_brNJQMg4xQwagQyNLn.mp3" autoplay></audio></div>',
+          }
+          /*'answer-question': {
+            templateUrl:'templates/listen/question.html',
             controller:'answerQuestionctrl'
             //templateUrl: "templates/answer-question.html"
-          },
-          'answer-type': {
-            template:'<div>333<audio src="https://fire.meten.cn/system/files/attachments/questionSound/NRXdJg4sEEtA1v_5A1QKyx_j.mp3" autoplay></audio></div>'
-            //templateUrl: "templates/answer-question.html"
-          }
+          }*/
 
         }
       })

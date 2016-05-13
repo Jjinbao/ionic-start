@@ -1,0 +1,68 @@
+<toefl-sound resource="question.questionSound" complete-event="question.sound-complete"></toefl-sound>
+
+<div class="row" ng-switch on="question.type">
+  <div style="width: 100%; margin-left: auto; margin-right: auto;">
+
+    <div ng-show="question.listenAgainNotice" ng-bind-html="question.listenAgainNotice.text"></div>
+    <div ng-hide="question.listenAgainNotice">
+      <div ng-switch-when="MultipleChoice">
+        <ol type="1" start="{{ question.number }}">
+          <li>
+            <div class="question-description" style="font-size: 16px;" ng-bind-html="question.description"></div>
+
+            <form class="answer-choices" ng-switch on="question.numAnswers" ng-show="showQuestionBody">
+              <!-- 单选题 -->
+              <div ng-switch-when="1" class="checkbox" ng-repeat="choice in question.choices">
+                <label>
+                  <input style="display: inline-block;" type="radio" ng-model="question.answer[0]" ng-value="choice.id">
+                  {{ choice.value }}
+                </label>
+              </div>
+              <!-- 多选题 -->
+              <div ng-switch-default class="checkbox" ng-repeat="choice in question.choices">
+                <label>
+                  <input style="display: inline-block" type="checkbox" checklist-model="question.answer" checklist-value="choice.id">
+                  {{ choice.value }}
+                </label>
+              </div>
+            </form>
+          </li>
+        </ol>
+      </div>
+
+      <div ng-switch-when="Sequence">
+        <ol type="1" start="{{ question.number }}">
+          <li>
+            <div class="question-description" ng-bind-html="question.description"></div>
+          </li>
+        </ol>
+
+        <div ng-show="showQuestionBody">
+          <div class="text-center">
+            <span class="drag-drop-hint">Drag your answer choices to the spaces where they belong.</span>
+          </div>
+
+          <div class="drag-drop-container" question="question">
+            <div style="border: thin solid"><!-- drop targets -->
+              <ul>
+                <li ng-repeat="id in question.answer track by $index">
+                  <div class="drop-target" choiceid="id"></div>
+                </li>
+              </ul>
+            </div>
+
+            <div class="answer-choices">
+              <h4 class="text-center">Answer Choices</h4>
+              <ul>
+                <li ng-repeat="choice in question.choices">
+                  <div><label choice="choice" class="draggable-choice"></label></div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
