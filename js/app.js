@@ -47,19 +47,19 @@ angular.module('ionicApp', ['ionic', 'app.controllers', 'toefl.service','toefl.u
         }
       })
       .state('tabs.listen-list', {
-        url: "/listen-list",
+        url: "/:tid",
         views: {
           'list-tab': {
-            templateUrl: "templates/listen-list.html",
+            templateUrl: "templates/listen/listen-list.html",
             controller: 'tpoListenList'
           }
         }
       })
       .state('tabs.listen-page', {
-        url: "/listen-page",
+        url: "/:sid",
         views: {
           'list-tab': {
-            templateUrl: "templates/listen-page.html",
+            templateUrl: "templates/listen/listen-root-page.html",
             controller:'listenQuestionPage'
           }
         }
@@ -67,27 +67,20 @@ angular.module('ionicApp', ['ionic', 'app.controllers', 'toefl.service','toefl.u
       .state('tabs.listen-page.son', {
         url: "/:template",
         views: {
-          'listen-material': {
+          'listen-root': {
             templateUrl:function(routeParams){
-              return 'templates/'+routeParams.template+'.html'
+              return 'templates/listen/'+routeParams.template+'.html'
             },
             controller:'listenMaterialCtrl'
-            //templateUrl: "templates/listen-material.html"
 
           }
-          /*'answer-question': {
-            templateUrl:'templates/listen/question.html',
-            controller:'answerQuestionctrl'
-            //templateUrl: "templates/answer-question.html"
-          }*/
-
         }
       })
       .state('tabs.speak-list', {
         url: "/speak-list",
         views: {
           'list-tab': {
-            templateUrl: "templates/speak-list.html",
+            templateUrl: "templates/speak/speak-list.html",
             controller: 'tpoSpeakList'
           }
         }
