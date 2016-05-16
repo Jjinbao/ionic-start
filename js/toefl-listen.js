@@ -1,4 +1,4 @@
-angular.module('app.controllers', ['checklist-model'])
+angular.module('app.listen-controllers', ['checklist-model'])
 
   /*听力列表controller*/
   .controller('tpoListenList', ['$scope', '$ionicHistory','$state',
@@ -86,10 +86,6 @@ angular.module('app.controllers', ['checklist-model'])
         });
         return sequence;
       }
-  }])
-
-  .controller('speakQuestionPage',['$scope',function($scope){
-    //@for speak part
   }])
 
   .directive('toeflClock', ['$interval', function($interval) {
@@ -255,24 +251,6 @@ angular.module('app.controllers', ['checklist-model'])
 
   }])
   /*口语列表控制器*/
-  .controller('tpoSpeakList', ['$scope', '$ionicHistory','$location',
-    function($scope, $ionicHistory,$location) {
-      console.log($location.url());
 
-      $scope.speakSectionList = [
-        {name:'Question 1',id:'1'},
-        {name:'Question 2',id:'2'},
-        {name:'Question 3',id:'3'},
-        {name:'Question 4',id:'4'},
-        {name:'Question 5',id:'5'},
-        {name:'Question 6',id:'6'}
-      ];
-      $scope.goBack = function() {
-        $ionicHistory.goBack();
-      }
-    }])
-  .controller('answerPageCtrl',['$scope',function($scope){
-    console.log('33333333333333333');
-  }])
 
 

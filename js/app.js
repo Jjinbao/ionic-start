@@ -1,4 +1,4 @@
-angular.module('ionicApp', ['ionic', 'app.controllers', 'toefl.service','toefl.utils'])
+angular.module('ionicApp', ['ionic', 'app.listen-controllers','app.speak-controllers', 'toefl.service','toefl.utils'])
 
   .run(['$rootScope', '$state', '$stateParams',
     function ($rootScope, $state, $stateParams) {
@@ -46,6 +46,7 @@ angular.module('ionicApp', ['ionic', 'app.controllers', 'toefl.service','toefl.u
           }
         }
       })
+
       .state('tabs.listen-list', {
         url: "/:tid",
         views: {
@@ -76,6 +77,7 @@ angular.module('ionicApp', ['ionic', 'app.controllers', 'toefl.service','toefl.u
           }
         }
       })
+
       .state('tabs.speak-list', {
         url: "/speak-list",
         views: {
@@ -84,7 +86,27 @@ angular.module('ionicApp', ['ionic', 'app.controllers', 'toefl.service','toefl.u
             controller: 'tpoSpeakList'
           }
         }
-      });
+      })
+      .state('tabs.speak-page', {
+        url: "/:sid",
+        views: {
+          'list-tab': {
+            templateUrl: "templates/speak/speak-root-page.html",
+            controller:'speakQuestionPage'
+          }
+        }
+      })
+      .state('tabs.speak-page.son', {
+        url: "/:template",
+        views: {
+          'speak-root': {
+            templateUrl:function(routeParams){
+              return 'templates/speak/'+routeParams.template+'.html'
+            }
+
+          }
+        }
+      })
 
     $urlRouterProvider.otherwise("/tab/list");
   })
