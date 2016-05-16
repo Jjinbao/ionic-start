@@ -1,7 +1,7 @@
-angular.module('ionicApp', ['ionic', 'app.listen-controllers','app.speak-controllers', 'toefl.service','toefl.utils'])
+angular.module('ionicApp', ['ionic', 'app.listen-controllers', 'app.speak-controllers', 'toefl.service', 'toefl.utils'])
 
   .run(['$rootScope', '$state', '$stateParams',
-    function ($rootScope, $state, $stateParams) {
+    function($rootScope, $state, $stateParams) {
       $rootScope.$state = $state;
       $rootScope.$stateParams = $stateParams;
     }])
@@ -61,7 +61,7 @@ angular.module('ionicApp', ['ionic', 'app.listen-controllers','app.speak-control
         views: {
           'list-tab': {
             templateUrl: "templates/listen/listen-root-page.html",
-            controller:'listenQuestionPage'
+            controller: 'listenQuestionPage'
           }
         }
       })
@@ -69,11 +69,9 @@ angular.module('ionicApp', ['ionic', 'app.listen-controllers','app.speak-control
         url: "/:template",
         views: {
           'listen-root': {
-            templateUrl:function(routeParams){
-              return 'templates/listen/'+routeParams.template+'.html'
-            },
-            controller:'listenMaterialCtrl'
-
+            templateUrl: function(routeParams) {
+              return 'templates/listen/' + routeParams.template + '.html'
+            }
           }
         }
       })
@@ -92,7 +90,7 @@ angular.module('ionicApp', ['ionic', 'app.listen-controllers','app.speak-control
         views: {
           'list-tab': {
             templateUrl: "templates/speak/speak-root-page.html",
-            controller:'speakQuestionPage'
+            controller: 'speakQuestionPage'
           }
         }
       })
@@ -100,8 +98,8 @@ angular.module('ionicApp', ['ionic', 'app.listen-controllers','app.speak-control
         url: "/:template",
         views: {
           'speak-root': {
-            templateUrl:function(routeParams){
-              return 'templates/speak/'+routeParams.template+'.html'
+            templateUrl: function(routeParams) {
+              return 'templates/speak/' + routeParams.template + '.html'
             }
 
           }
@@ -126,7 +124,8 @@ angular.module('ionicApp', ['ionic', 'app.listen-controllers','app.speak-control
   }])
 
   /*list controller*/
-  .controller('listCtrl', ['$scope', '$state', function($scope, $state) {
+  .controller('listCtrl', ['$scope', '$state', 'isTestService', function($scope, $state, isTestService) {
+    $scope.settingsTest = isTestService;
     $scope.topNo = '';
     $scope.groups = [];
     $scope.groups[0] = {
@@ -151,15 +150,19 @@ angular.module('ionicApp', ['ionic', 'app.listen-controllers','app.speak-control
     };
 
     $scope.choiceTpo = function(type, index) {
-      console.log(type);
-      console.log(index);
       $scope.$emit('from.list', index);
       if (type == 'L') {
-        $state.go('tabs.listen-list', {tid: index});
+        if($scope.settingsTest.checked==true){
+          console.log('考试模式！');
+        }else{
+          console.log('单个练习！');
+          $state.go('tabs.listen-list', {tid: index});
+        }
+
       } else {
         $state.go('tabs.speak-list', {tid: index});
       }
-    }
+    };
   }])
 
   .directive('hideTabs', function($rootScope) {

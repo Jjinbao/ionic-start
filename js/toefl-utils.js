@@ -2,7 +2,7 @@
 
 angular.module('toefl.utils', ['ngAudio'])
 
-  .directive('toeflSound', ['ngAudio', function(ngAudio) {
+  .directive('toeflSound', ['ngAudio', '$interval', function(ngAudio,$interval) {
     return {
       restrict: 'E',
       scope: {
@@ -21,6 +21,12 @@ angular.module('toefl.utils', ['ngAudio'])
             $scope.autoPlay = attrs.autoPlay ? angular.fromJson(attrs.autoPlay) : true;
             if ($scope.autoPlay) {
               sound.play();
+              if(attrs.replayAgain>0){
+                var intervalId=$interval(function(){
+                  $interval.cancel(intervalId);
+                  $scope.$emit('listen.again.notic','listen again complete');
+                },attrs.replayAgain)
+              }
             }
 
             sound.complete(function() {

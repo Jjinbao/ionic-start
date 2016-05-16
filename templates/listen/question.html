@@ -1,9 +1,14 @@
-<toefl-sound resource="question.questionSound" complete-event="question.sound-complete"></toefl-sound>
+<toefl-sound resource="question.questionSound" complete-event="question.sound-complete" replay-again="{{question.questionStartPoint}}"></toefl-sound>
 
 <div class="row" ng-switch on="question.type">
   <div style="width: 100%; margin-left: auto; margin-right: auto;">
 
-    <div ng-show="question.listenAgainNotice" ng-bind-html="question.listenAgainNotice.text"></div>
+    <div class="row" ng-show="question.listenAgainNotice">
+      <div class="col col-90">
+        <div ng-bind-html="question.listenAgainNotice.text" style="max-width:100%"></div>
+      </div>
+    </div>
+
     <div ng-hide="question.listenAgainNotice">
       <div ng-switch-when="MultipleChoice">
         <ol type="1" start="{{ question.number }}">

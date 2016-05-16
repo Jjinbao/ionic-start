@@ -17,15 +17,16 @@ angular.module('app.listen-controllers', ['checklist-model'])
       }
 
       $scope.startListen=function(id){
-        $state.go('tabs.listen-page.son',{template:'listen-to-material',sid:id});
+        $state.go('tabs.listen-page.son',{template:'preload-data',sid:id});
       }
     }])
 
   .controller('listenQuestionPage',['$scope','$ionicHistory','$compile','sectionService','$state',
     function($scope,$ionicHistory,$compile,sectionService,$state){
       $scope.section=sectionService.section;
+      $scope.showButton=false;
       $scope.sences=['question','question'];
-
+      $scope.showQuestionBody = false;
       $scope.$watchCollection('section',function(newVal){
         if(newVal.uuid){
           $scope.unit=newVal.units[0];
@@ -38,10 +39,15 @@ angular.module('app.listen-controllers', ['checklist-model'])
       sectionService.retrieve('listensection');
 
       /*显示题干，开始做题*/
-      $scope.showQuestionBody = false;
       $scope.$on('question.sound-complete', function() {
         $scope.showQuestionBody = true;
       });
+
+      $scope.$on('listen.again.notic',function(evt,data){
+        if ($scope.question.questionStartPoint > 0 && $scope.question.listenAgainNotice) {
+          delete $scope.question.listenAgainNotice;
+        }
+      })
 
       $scope.back=function(){
         //@todo
@@ -49,21 +55,24 @@ angular.module('app.listen-controllers', ['checklist-model'])
 
       $scope.number=-1;
       $scope.continue=function(){
-        $scope.number++;
-        $scope.question=$scope.section.units[0].questions[$scope.number];
-        $state.go('tabs.listen-page.son',{template:$scope.sences[$scope.number]});
+        if($scope.sences.length>++$scope.number){
+          route_according_to_sequence($scope.sences[$scope.number]);
+        }
         $scope.showQuestionBody = false;
       }
 
-      $scope.goBack=function(){
-        console.log($ionicHistory.viewHistory());
-        $ionicHistory.goBack();
-      }
+
 
       function route_according_to_sequence(obj) {
-        if (obj instanceof ToeflListeningUnit) {
+
+        if (obj instanceof ToeflListeningTask) {
           $scope.unit = obj;
-          //$location.path('/listening/listen-to-material');
+          $scope.showButton=false;
+          $state.go('tabs.listen-page.son',{template:'listen-to-material'});
+        }else{
+          $scope.showButton=true;
+          $scope.question=$scope.unit.questions[$scope.number];
+          $state.go('tabs.listen-page.son',{template:obj});
         }
       }
 
@@ -78,13 +87,19 @@ angular.module('app.listen-controllers', ['checklist-model'])
           toolbar_buttons.push({continue: true});
         }*/
         angular.forEach(section.units, function(unit) {
-          //sequence.push(unit);
-          //sequence.push('/listening/ready-to-answer');
+          sequence.push(unit);
           angular.forEach(unit.questions, function(question) {
             sequence.push('question');
           })
         });
+        sequence.push('end-test');
         return sequence;
+      }
+
+      //就特么是返回
+      $scope.goBack=function(){
+        console.log($ionicHistory.viewHistory());
+        $ionicHistory.goBack();
       }
   }])
 
