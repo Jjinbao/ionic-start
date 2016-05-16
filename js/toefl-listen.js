@@ -21,19 +21,16 @@ angular.module('app.listen-controllers', ['checklist-model'])
       }
     }])
 
-  .controller('listenQuestionPage',['$scope','$ionicHistory','$compile','sectionService','$state',
-    function($scope,$ionicHistory,$compile,sectionService,$state){
+  .controller('listenQuestionPage',['$scope','$ionicHistory','$compile','sectionService','$state','isTestService',
+    function($scope,$ionicHistory,$compile,sectionService,$state,isTestService){
       $scope.section=sectionService.section;
+      $scope.testType=isTestService;
       $scope.showButton=false;
-      $scope.sences=['question','question'];
       $scope.showQuestionBody = false;
       $scope.$watchCollection('section',function(newVal){
         if(newVal.uuid){
-          $scope.unit=newVal.units[0];
-          $scope.question=newVal.units[0].questions[0];
           $scope.sences=make_up_route_sequence($scope.section);
-          //$scope.initView();
-          //$scope.continue();
+          console.log($scope.sences);
         }
       });
       sectionService.retrieve('listensection');
@@ -53,25 +50,30 @@ angular.module('app.listen-controllers', ['checklist-model'])
         //@todo
       }
 
-      $scope.number=-1;
+      $scope.next=function(){
+        //@todo
+      }
+
+      //listen queues number
+      $scope.queueNum=-1;
       $scope.continue=function(){
-        if($scope.sences.length>++$scope.number){
-          route_according_to_sequence($scope.sences[$scope.number]);
+        if($scope.sences.length>++$scope.queueNum){
+          route_according_to_sequence($scope.sences[$scope.queueNum]);
         }
         $scope.showQuestionBody = false;
       }
 
 
-
+      //now question number
+      $scope.qNumber=0;
       function route_according_to_sequence(obj) {
-
         if (obj instanceof ToeflListeningTask) {
           $scope.unit = obj;
-          $scope.showButton=false;
+          $scope.qNumber=0;
           $state.go('tabs.listen-page.son',{template:'listen-to-material'});
         }else{
           $scope.showButton=true;
-          $scope.question=$scope.unit.questions[$scope.number];
+          $scope.question=$scope.unit.questions[$scope.qNumber++];
           $state.go('tabs.listen-page.son',{template:obj});
         }
       }
@@ -103,169 +105,13 @@ angular.module('app.listen-controllers', ['checklist-model'])
       }
   }])
 
-  .directive('toeflClock', ['$interval', function($interval) {
-    return {
-      restrict: 'CE',
-      templateUrl: 'templates/toefl-clock.html',
-      scope: {},
-
-      controller: ['$scope', function($scope) {
-        var elapsed_time, start_time, intervalId;
-
-        // Start a new clock whenever the time limit changes.
-        $scope.$watch('timeLimit', function(value) {
-          if (value > 0) {
-            elapsed_time = 0;
-            update_clock_time();
-            $scope.enableButton();
-          }
-        });
-        $scope.$watch('startTicking', function(value) {
-          if (value) {
-            start_time = Date.now();
-
-            // Start ticking and save the timeoutId for canceling
-            intervalId = $interval(function() {
-              calculate_elapsed_time();
-              update_clock_time();
-            }, 500);
-          }
-          else {
-            calculate_elapsed_time();
-            start_time = null;
-            cancel_interval();
-          }
-        });
-
-        $scope.$on('$destroy', function() {
-          cancel_interval();
-        });
-
-        var controller = {
-          set timeLimit(value) {
-            if (value > 0) {
-              $scope.timeLimit = 0;
-              $scope.timeLimit = value;
-            }
-          },
-          set timeoutEvent(value) {
-            $scope.timeoutEvent = value;
-          },
-          set timeout(fn) {
-            $scope.timeout = fn;
-          },
-          start: function() {
-            if (!$scope.startTicking) {
-              $scope.startTicking = true;
-            }
-          },
-          pause: function() {
-            if ($scope.startTicking) {
-              $scope.startTicking = false;
-            }
-          },
-          hide: function() {
-            $scope.hideClock();
-          }
-        };
-        $scope.$emit('toefl-clock', controller);
-        return controller;
-
-        function cancel_interval() {
-          if (intervalId) {
-            $interval.cancel(intervalId);
-            intervalId = null;
-          }
-        }
-
-        function calculate_elapsed_time() {
-          if (start_time) {
-            var current = Date.now();
-            elapsed_time += (current - start_time);
-            start_time = current;
-          }
-        }
-
-        function update_clock_time() {
-          var remaining_seconds = $scope.timeLimit - Math.round(elapsed_time / 1000);
-          if (remaining_seconds <= 0) {
-            remaining_seconds = 0;
-            cancel_interval();
-            $scope.disableButton();
-          }
-          $scope.showClock(remaining_seconds);
-
-          if (remaining_seconds === 0) {
-            if ($scope.timeoutEvent) {
-              $scope.$emit($scope.timeoutEvent);
-            }
-            if ($scope.timeout) {
-              $scope.timeout();
-            }
-          }
-        }
-      }],
-
-      link: function($scope, element) {
-        var hide_clock = false;
-        element.css({display: 'none'})
-          .find('button')
-          .attr('disabled', 'disabled')
-          .on('click', function() {
-            show_or_hide_time();
-          });
-
-        $scope.showClock = function(seconds) {
-          element.css({display: 'block'})
-            .find('label').text(format_remaining_seconds(seconds));
-        };
-        $scope.hideClock = function() {
-          element.css({display: 'none'});
-        };
-        $scope.disableButton = function() {
-          element.find('button').attr('disabled', 'disabled');
-        };
-        $scope.enableButton = function() {
-          element.find('button').removeAttr('disabled');
-        };
-
-        function show_or_hide_time() {
-          hide_clock = ! hide_clock;
-          if (hide_clock) {
-            element.find('label').css({display: 'none'});
-            element.find('button').text('SHOW TIME');
-          }
-          else {
-            element.find('label').css({display: null});
-            element.find('button').text('HIDE TIME');
-          }
-        }
-
-        function format_remaining_seconds(num_seconds) {
-          var seconds = num_seconds % 60;
-          if (seconds < 10) {
-            seconds = '0' + seconds;
-          }
-          var minutes = Math.floor(num_seconds / 60) % 60;
-          if (minutes < 10) {
-            minutes = '0' + minutes;
-          }
-          var hours = Math.floor(num_seconds / 3600);
-          return hours + ' : ' + minutes + ' : ' + seconds;
-        }
-      }
-    };
-  }])
-
   .controller('listenMaterialCtrl',['$scope','$ionicHistory',function($scope,$ionicHistory){
-
 
   }])
   .controller('answerQuestionctrl',['$scope','$ionicHistory',function($scope,$ionicHistory){
 
 
   }])
-  /*口语列表控制器*/
 
 
 

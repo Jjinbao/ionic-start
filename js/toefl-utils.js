@@ -23,6 +23,7 @@ angular.module('toefl.utils', ['ngAudio'])
               sound.play();
               if(attrs.replayAgain>0){
                 var intervalId=$interval(function(){
+                  console.log('22222222222@@@@@');
                   $interval.cancel(intervalId);
                   $scope.$emit('listen.again.notic','listen again complete');
                 },attrs.replayAgain)
@@ -131,7 +132,7 @@ angular.module('toefl.utils', ['ngAudio'])
     };
   }])*/
 
-  /*.directive('toeflClock', ['$interval', function($interval) {
+  .directive('toeflClock', ['$interval', function($interval) {
     return {
       restrict: 'CE',
       templateUrl: 'templates/toefl-clock.html',
@@ -283,4 +284,4 @@ angular.module('toefl.utils', ['ngAudio'])
         }
       }
     };
-  }]);*/
+  }]);

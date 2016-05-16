@@ -154,6 +154,7 @@ angular.module('ionicApp', ['ionic', 'app.listen-controllers', 'app.speak-contro
       if (type == 'L') {
         if($scope.settingsTest.checked==true){
           console.log('考试模式！');
+          $state.go('tabs.listen-page.son',{template:'preload-data',sid:index});
         }else{
           console.log('单个练习！');
           $state.go('tabs.listen-list', {tid: index});
