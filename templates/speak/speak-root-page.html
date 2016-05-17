@@ -1,0 +1,17 @@
+<ion-view title="{{topNo}}" can-swipe-back="false" hide-tabs="true">
+  <ion-nav-buttons side="left">
+    <button ng-click="goBack()" style="color: white;" class="button button-clear">
+      <span class="icon ion-arrow-left-c"></span>
+    </button>
+  </ion-nav-buttons>
+  <ion-nav-buttons side="right" >
+    <span style="font-size:16px; align-items: center;padding-right: 10px;" ng-show="navTime">
+      <speak-clock></speak-clock>
+    </span>
+  </ion-nav-buttons>
+
+  <ion-content has-header="true" padding="true">
+    <div ui-view="speak-root"></div>
+  </ion-content>
+
+</ion-view>

@@ -1,0 +1,29 @@
+<ion-view title="{{topNo}}" can-swipe-back="false" hide-tabs="true">
+  <ion-nav-buttons side="left">
+    <button ng-click="goBack()" style="color: white;" class="button button-clear">
+      <span class="icon ion-arrow-left-c"></span>
+    </button>
+  </ion-nav-buttons>
+  <ion-nav-buttons side="right">
+    <span style="font-size:16px; align-items: center;padding-right: 10px;">04:00</span>
+  </ion-nav-buttons>
+
+  <ion-content has-header="true" padding="true">
+    <div ui-view="listen-root"></div>
+  </ion-content>
+  <ion-footer-bar ng-show="showButton">
+    <div class="row" ng-hide="true">
+      <div class="col-33">
+        <button style="width: 100%" class="button button-light">上一题</button>
+      </div>
+      <div class="col-33">
+        <button style="width: 100%" class="button button-light">查看答案</button>
+      </div>
+      <div class="col-33">
+        <button style="width: 100%" class="button button-light">下一题</button>
+      </div>
+    </div>
+    <button ng-show="true" class="button button-light" style="width: 100%;" ng-click="continue()" ng-disabled="!question.answer[0]">下一题
+    </button>
+  </ion-footer-bar>
+</ion-view>
