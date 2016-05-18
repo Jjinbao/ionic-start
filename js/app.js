@@ -113,7 +113,7 @@ angular.module('ionicApp', ['ionic', 'app.listen-controllers', 'app.speak-contro
   .controller('rootTabCtrl', ['$scope', function($scope) {
     $scope.tpoNo = 'list';
     $scope.$on('from.list', function(evt, data) {
-      $scope.topNo = 'TPO ' + data;
+      $scope.topNo =data;
     })
 
   }])

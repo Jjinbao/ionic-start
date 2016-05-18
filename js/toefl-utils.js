@@ -23,7 +23,6 @@ angular.module('toefl.utils', ['ngAudio'])
               sound.play();
               if(attrs.replayAgain>0){
                 var intervalId=$interval(function(){
-                  console.log('22222222222@@@@@');
                   $interval.cancel(intervalId);
                   $scope.$emit('listen.again.notic','listen again complete');
                 },attrs.replayAgain)
@@ -146,7 +145,7 @@ angular.module('toefl.utils', ['ngAudio'])
           if (value > 0) {
             elapsed_time = 0;
             update_clock_time();
-            $scope.enableButton();
+            //$scope.enableButton();
           }
         });
         $scope.$watch('startTicking', function(value) {
@@ -220,15 +219,17 @@ angular.module('toefl.utils', ['ngAudio'])
           if (remaining_seconds <= 0) {
             remaining_seconds = 0;
             cancel_interval();
-            $scope.disableButton();
+            $scope.$emit('section.timeout');
           }
           $scope.showClock(remaining_seconds);
 
           if (remaining_seconds === 0) {
             if ($scope.timeoutEvent) {
-              $scope.$emit($scope.timeoutEvent);
+              console.log($scope.timeoutEvent);
+
             }
             if ($scope.timeout) {
+              console.log('time out');
               $scope.timeout();
             }
           }
@@ -236,13 +237,13 @@ angular.module('toefl.utils', ['ngAudio'])
       }],
 
       link: function($scope, element) {
-        var hide_clock = false;
-        element.css({display: 'none'})
+        //var hide_clock = false;
+        /*element.css({display: 'none'})
           .find('button')
           .attr('disabled', 'disabled')
           .on('click', function() {
             show_or_hide_time();
-          });
+          });*/
 
         $scope.showClock = function(seconds) {
           element.css({display: 'block'})
@@ -258,7 +259,7 @@ angular.module('toefl.utils', ['ngAudio'])
           element.find('button').removeAttr('disabled');
         };
 
-        function show_or_hide_time() {
+        /*function show_or_hide_time() {
           hide_clock = ! hide_clock;
           if (hide_clock) {
             element.find('label').css({display: 'none'});
@@ -268,7 +269,7 @@ angular.module('toefl.utils', ['ngAudio'])
             element.find('label').css({display: null});
             element.find('button').text('HIDE TIME');
           }
-        }
+        }*/
 
         function format_remaining_seconds(num_seconds) {
           var seconds = num_seconds % 60;
@@ -279,9 +280,112 @@ angular.module('toefl.utils', ['ngAudio'])
           if (minutes < 10) {
             minutes = '0' + minutes;
           }
-          var hours = Math.floor(num_seconds / 3600);
-          return hours + ' : ' + minutes + ' : ' + seconds;
+          return minutes + ' : ' + seconds;
         }
       }
     };
-  }]);
+  }])
+  .directive('audioPlayer', function() {
+    return {
+      restrict: 'EA',
+      replace: true,
+      controller: ['$scope', '$interval', function($scope, $interval) {
+        $scope.currentTime = "00 : 00 : 00";
+        $scope.audio = document.createElement("audio");
+        $scope.shift = 0;
+        $scope.iconSwitch = "ion-play";
+        $scope.totalTime = "00 : 00 : 00";
+        angular.element($scope.audio).attr("src", "http://tingge.yymp3.com/new27/panfan4/1.mp3");
+        //audio.play();
+        $scope.audio.addEventListener('canplay', function() {
+          $scope.totalTime = $scope.format_remaining_seconds($scope.audio.duration);
+        }, false);
+        var centValue = "1%";
+        $scope.progressCent = {"width": centValue};
+
+        $scope.format_remaining_seconds=function(num_seconds) {
+          num_seconds=Math.floor(num_seconds)
+          var seconds = num_seconds % 60;
+          if (seconds < 10) {
+            seconds = '0' + seconds;
+          }
+          var minutes = Math.floor(num_seconds / 60) % 60;
+          if (minutes < 10) {
+            minutes = '0' + minutes;
+          }
+          var hours = Math.floor(num_seconds / 3600);
+          if (hours < 10) {
+            hours = '0' + hours;
+          }
+          return hours + ' : ' + minutes + ' : ' + seconds;
+        };
+        $scope.progress=function() {
+          console.log("正在播放");
+          $scope.currentTime = $scope.format_remaining_seconds($scope.audio.currentTime);
+          var centValue = ($scope.audio.currentTime / $scope.audio.duration) * 100 + "%";
+          $scope.progressCent = {"width": centValue};
+        };
+        $interval.cancel($scope.progressTime);
+        $scope.switch = function() {
+
+          if ($scope.shift == 0) {
+            $scope.shift = 1;
+            $scope.iconSwitch = "ion-pause";
+            $scope.audio.play();
+            $scope.progressTime=$interval($scope.progress, 500);
+          } else {
+            $scope.shift = 0;
+            $scope.iconSwitch = "ion-play";
+            $scope.audio.pause();
+            $interval.cancel($scope.progressTime);
+          }
+        };
+
+      }],
+      template: '<div class="player-module"><div class="module-circle-switch" on-tap="switch()">' +
+      '<div class="module-circle-inner"><div class="circle-inner-black" ><i ng-class="iconSwitch" ' +
+      'style="font-size:30px;color: #f0ad4e" ></i></div></div></div><div class="progress-position">' +
+      '<div ng-bind="currentTime"></div><swipe></swipe>' +
+      '<div ng-bind="totalTime"></div></div></div>',
+      link: function(scope, element, attrs) {
+
+      }
+    }
+  })
+  .directive('swipe', function($interval) {
+    return {
+      restrict: 'EA',
+      replace: true,
+      controller: ['$scope', '$interval', function($scope, $interval) {
+
+      }],
+      template:'<div class="progress progress-style" on-touch="touchdown($event)" ' +
+      'on-release="reStartAudio()" on-drag="swipe($event)" > ' +
+      '<span class="blue" ng-style="progressCent"></span></div>',
+      link: function($scope, element, attrs) {
+        $scope.touchdown=function($event){
+          $scope.audio.pause();
+          var progressWidth=$event.gesture.center.pageX - element[0].offsetLeft;
+          var progressAllWidth=element[0].scrollWidth;
+          var centValue=(progressWidth/progressAllWidth)*100+"%";
+          $scope.progressCent={"width": centValue};
+          $scope.audio.currentTime=(progressWidth/progressAllWidth)*$scope.audio.duration;
+          $scope.currentTime = $scope.format_remaining_seconds((progressWidth/progressAllWidth)*$scope.audio.duration)
+        };
+        $scope.reStartAudio=function(){
+          if($scope.shift==1){
+            $scope.audio.play();
+          }
+        };
+        $scope.swipe=function($event){
+          var progressWidth=$event.gesture.center.pageX - element[0].offsetLeft;
+          var progressAllWidth=element[0].scrollWidth;
+          var centValue=(progressWidth/progressAllWidth)*100+"%";
+          $scope.progressCent={"width": centValue};
+          $scope.audio.currentTime=(progressWidth/progressAllWidth)*$scope.audio.duration;
+          $scope.currentTime = $scope.format_remaining_seconds((progressWidth/progressAllWidth)*$scope.audio.duration)
+        };
+
+      }
+    }
+  })
