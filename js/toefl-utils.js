@@ -300,14 +300,17 @@ angular.module('toefl.utils', ['ngAudio'])
         $scope.iconSwitch = "ion-play";
         $scope.totalTime = "00 : 00";
         $scope.$watch('audioUrl', function(value) {
+          if(value){
+
+          }
           var firstCanPlay=true;
           $scope.audioUrl=value;
           angular.element($scope.audio).attr("src",$scope.audioUrl);
           $scope.audio.addEventListener('canplay', function() {
+            console.log('canplay');
             if(firstCanPlay) {
               firstCanPlay=false;
               $scope.totalTime = $scope.format_remaining_seconds($scope.audio.duration);
-              console.log("nengbofang")
               $scope.switch();
             }
           }, false);
@@ -318,7 +321,7 @@ angular.module('toefl.utils', ['ngAudio'])
             $scope.audio.currentTime=0;
             $scope.$digest();
           });
-          var centValue = "1%";
+          var centValue = "0%";
           $scope.progressCent = {"width": centValue};
           $scope.format_remaining_seconds=function(num_seconds) {
             num_seconds=Math.floor(num_seconds);
@@ -330,10 +333,6 @@ angular.module('toefl.utils', ['ngAudio'])
             if (minutes < 10) {
               minutes = '0' + minutes;
             }
-            //var hours = Math.floor(num_seconds / 3600);
-            //if (hours < 10) {
-            //  hours = '0' + hours;
-            //}
             return minutes + ' : ' + seconds;
           };
           $scope.progress=function() {
@@ -356,6 +355,13 @@ angular.module('toefl.utils', ['ngAudio'])
               $interval.cancel($scope.progressTime);
             }
           };
+
+
+          $scope.$on('$destroy', function() {
+            if ($scope.audio) {
+              $scope.audio.pause();
+            }
+          });
         })
 
       }],
