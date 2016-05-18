@@ -2,7 +2,7 @@
 
 angular.module('toefl.service', ['ngResource'])
 
-  .value('isTestService',{ text: "ÎÒÒªÄ£Äâ¿¼ÊÔ", checked: false })
+  .value('isTestService',{ text: "æˆ‘è¦æ¨¡æ‹Ÿè€ƒè¯•", checked: false })
 
   .service('sectionService', ['$resource', '$window', function($resource, $window) {
     var section = {};
