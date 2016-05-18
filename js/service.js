@@ -2,13 +2,12 @@
 
 angular.module('toefl.service', ['ngResource'])
 
-  .value('isTestService',{ text: "我要模拟考试", checked: false })
+  .value('isTestService',{ text: "我要模拟测试", checked: false })
 
   .service('sectionService', ['$resource', '$window', function($resource, $window) {
     var section = {};
     return {
       section: section,
-
       retrieve: function(uuid) {
         angular.copy({}, section);
         return retrieve_by_uuid(uuid);

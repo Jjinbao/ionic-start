@@ -1,0 +1,20 @@
+<ion-view title="TPO {{topNo}}" can-swipe-back="false" hide-tabs="true">
+  <ion-nav-buttons side="left">
+    <button ng-click="goBack()" style="color: white;" class="button button-clear">
+      <span class="icon ion-arrow-left-c"></span>
+    </button>
+  </ion-nav-buttons>
+  <ion-nav-buttons side="right">
+    <div class="toefl-clock"></div>
+  </ion-nav-buttons>
+
+  <ion-content class="has-footer" has-header="true" padding="true">
+    <div ui-view="listen-root"></div>
+  </ion-content>
+
+  <ion-footer-bar ng-show="showButton">
+    <button class="button button-light" style="width: 100%;" ng-click="continue()"
+            ng-disabled="!question.answer[0]">下一题
+    </button>
+  </ion-footer-bar>
+</ion-view>

@@ -1,0 +1,34 @@
+<ion-view title="TPO {{topNo}}" can-swipe-back="false" hide-tabs="true">
+  <ion-nav-buttons side="left">
+    <button ng-click="goBack()" style="color: white;" class="button button-clear">
+      <span class="icon ion-arrow-left-c"></span>
+    </button>
+  </ion-nav-buttons>
+  <ion-nav-buttons side="right">
+    <button class="button button-clear" ng-click="showViewMenu()" ng-disabled="queueNum<0">
+      <span class="icon ion-navicon"></span>
+    </button>
+  </ion-nav-buttons>
+
+  <ion-content class="has-footer has-subfooter" has-header="true" padding="true">
+    <div ui-view="practice-root"></div>
+  </ion-content>
+
+  <ion-footer-bar class="bar-subfooter positive-bg bar-positive" ng-show="practiceView">
+    <audio-player audio-url="unit.listeningSound"></audio-player>
+  </ion-footer-bar>
+
+  <ion-footer-bar class="bar-footer" ng-show="practiceView">
+    <div class="row" style="align-items: center;">
+      <div class="col-33">
+        <button class="button" style="width: 100%" ng-disabled="qNumber<=0||practiceView!='question'" ng-click="back()">上一题</button>
+      </div>
+      <div class="col-33">
+        <button class="button" style="width: 100%" ng-disabled="false" ng-click="showAnswer()">显示答案</button>
+      </div>
+      <div class="col-33">
+        <button class="button" style="width: 100%" ng-disabled="qNumber==(unit.questions.length-1)||practiceView!='question'" ng-click="next()">下一题</button>
+      </div>
+    </div>
+  </ion-footer-bar>
+</ion-view>

@@ -1,5 +1,18 @@
 angular.module('ionicApp', ['ionic', 'app.listen-controllers', 'app.speak-controllers', 'toefl.service', 'toefl.utils'])
 
+  .run(function($ionicPlatform) {
+    $ionicPlatform.ready(function() {
+      // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
+      // for form inputs)
+      if (window.cordova && window.cordova.plugins.Keyboard) {
+        cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+      }
+      if (window.StatusBar) {
+        StatusBar.styleDefault();
+      }
+    })
+  })
+
   .run(['$rootScope', '$state', '$stateParams',
     function($rootScope, $state, $stateParams) {
       $rootScope.$state = $state;
@@ -51,21 +64,41 @@ angular.module('ionicApp', ['ionic', 'app.listen-controllers', 'app.speak-contro
         url: "/:tid",
         views: {
           'list-tab': {
-            templateUrl: "templates/listen/listen-list.html",
+            templateUrl: "templates/listen/list.html",
             controller: 'tpoListenList'
           }
         }
       })
-      .state('tabs.listen-page', {
+      .state('tabs.listen-practice', {
         url: "/:sid",
         views: {
           'list-tab': {
-            templateUrl: "templates/listen/listen-root-page.html",
-            controller: 'listenQuestionPage'
+            templateUrl: "templates/listen/practice-root.html",
+            controller: 'listenPracticeCtrl'
           }
         }
       })
-      .state('tabs.listen-page.son', {
+      .state('tabs.listen-practice.son', {
+        url: "/:template",
+        views: {
+          'practice-root': {
+            templateUrl: function(routeParams) {
+              return 'templates/listen/' + routeParams.template + '.html'
+            }
+          }
+        }
+      })
+
+      .state('tabs.listen-test', {
+        url: "/:sid",
+        views: {
+          'list-tab': {
+            templateUrl: "templates/listen/root-page.html",
+            controller: 'listenTestCtrl'
+          }
+        }
+      })
+      .state('tabs.listen-test.son', {
         url: "/:template",
         views: {
           'listen-root': {
@@ -113,7 +146,7 @@ angular.module('ionicApp', ['ionic', 'app.listen-controllers', 'app.speak-contro
   .controller('rootTabCtrl', ['$scope', function($scope) {
     $scope.tpoNo = 'list';
     $scope.$on('from.list', function(evt, data) {
-      $scope.topNo =data;
+      $scope.topNo = data;
     })
 
   }])
@@ -139,8 +172,10 @@ angular.module('ionicApp', ['ionic', 'app.listen-controllers', 'app.speak-contro
       show: false
     }
     for (var j = 48; j > 0; j--) {
-      $scope.groups[0].items.push(j);
-      $scope.groups[1].items.push(j);
+      if (j != 37 && j != 38 && j != 39) {
+        $scope.groups[0].items.push(j);
+        $scope.groups[1].items.push(j);
+      }
     }
     $scope.toggleGroup = function(group) {
       group.show = !group.show;
@@ -152,11 +187,9 @@ angular.module('ionicApp', ['ionic', 'app.listen-controllers', 'app.speak-contro
     $scope.choiceTpo = function(type, index) {
       $scope.$emit('from.list', index);
       if (type == 'L') {
-        if($scope.settingsTest.checked==true){
-          console.log('考试模式！');
-          $state.go('tabs.listen-page.son',{template:'preload-data',sid:index});
-        }else{
-          console.log('单个练习！');
+        if ($scope.settingsTest.checked == true) {
+          $state.go('tabs.listen-test.son', {template: 'preload-data', sid: index});
+        } else {
           $state.go('tabs.listen-list', {tid: index});
         }
 

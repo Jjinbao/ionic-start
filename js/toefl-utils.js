@@ -285,83 +285,95 @@ angular.module('toefl.utils', ['ngAudio'])
       }
     };
   }])
-  .directive('audioPlayer', function() {
+  .directive('audioPlayer', function($location) {
     return {
       restrict: 'EA',
       replace: true,
+      scope:{
+        audioUrl:'<'
+      },
       controller: ['$scope', '$interval', function($scope, $interval) {
-        $scope.currentTime = "00 : 00 : 00";
+        $scope.currentTime = "00 : 00";
         $scope.audio = document.createElement("audio");
+
         $scope.shift = 0;
         $scope.iconSwitch = "ion-play";
-        $scope.totalTime = "00 : 00 : 00";
-        angular.element($scope.audio).attr("src", "http://tingge.yymp3.com/new27/panfan4/1.mp3");
-        //audio.play();
-        $scope.audio.addEventListener('canplay', function() {
-          $scope.totalTime = $scope.format_remaining_seconds($scope.audio.duration);
-        }, false);
-        var centValue = "1%";
-        $scope.progressCent = {"width": centValue};
-
-        $scope.format_remaining_seconds=function(num_seconds) {
-          num_seconds=Math.floor(num_seconds)
-          var seconds = num_seconds % 60;
-          if (seconds < 10) {
-            seconds = '0' + seconds;
-          }
-          var minutes = Math.floor(num_seconds / 60) % 60;
-          if (minutes < 10) {
-            minutes = '0' + minutes;
-          }
-          var hours = Math.floor(num_seconds / 3600);
-          if (hours < 10) {
-            hours = '0' + hours;
-          }
-          return hours + ' : ' + minutes + ' : ' + seconds;
-        };
-        $scope.progress=function() {
-          console.log("正在播放");
-          $scope.currentTime = $scope.format_remaining_seconds($scope.audio.currentTime);
-          var centValue = ($scope.audio.currentTime / $scope.audio.duration) * 100 + "%";
-          $scope.progressCent = {"width": centValue};
-        };
-        $interval.cancel($scope.progressTime);
-        $scope.switch = function() {
-
-          if ($scope.shift == 0) {
-            $scope.shift = 1;
-            $scope.iconSwitch = "ion-pause";
-            $scope.audio.play();
-            $scope.progressTime=$interval($scope.progress, 500);
-          } else {
-            $scope.shift = 0;
+        $scope.totalTime = "00 : 00";
+        $scope.$watch('audioUrl', function(value) {
+          var firstCanPlay=true;
+          $scope.audioUrl=value;
+          angular.element($scope.audio).attr("src",$scope.audioUrl);
+          $scope.audio.addEventListener('canplay', function() {
+            if(firstCanPlay) {
+              firstCanPlay=false;
+              $scope.totalTime = $scope.format_remaining_seconds($scope.audio.duration);
+              console.log("nengbofang")
+              $scope.switch();
+            }
+          }, false);
+          $scope.audio.addEventListener('ended',function(){
+            $scope.shift=0;
             $scope.iconSwitch = "ion-play";
-            $scope.audio.pause();
             $interval.cancel($scope.progressTime);
-          }
-        };
+            $scope.audio.currentTime=0;
+            $scope.$digest();
+          });
+          var centValue = "1%";
+          $scope.progressCent = {"width": centValue};
+          $scope.format_remaining_seconds=function(num_seconds) {
+            num_seconds=Math.floor(num_seconds);
+            var seconds = num_seconds % 60;
+            if (seconds < 10) {
+              seconds = '0' + seconds;
+            }
+            var minutes = Math.floor(num_seconds / 60) % 60;
+            if (minutes < 10) {
+              minutes = '0' + minutes;
+            }
+            //var hours = Math.floor(num_seconds / 3600);
+            //if (hours < 10) {
+            //  hours = '0' + hours;
+            //}
+            return minutes + ' : ' + seconds;
+          };
+          $scope.progress=function() {
+            $scope.currentTime = $scope.format_remaining_seconds($scope.audio.currentTime);
+            var centValue = ($scope.audio.currentTime / $scope.audio.duration) * 100 + "%";
+            $scope.progressCent = {"width": centValue};
+
+          };
+
+          $scope.switch = function() {
+            if ($scope.shift == 0) {
+              $scope.shift = 1;
+              $scope.iconSwitch = "ion-pause";
+              $scope.audio.play();
+              $scope.progressTime=$interval($scope.progress, 500);
+            } else {
+              $scope.shift = 0;
+              $scope.iconSwitch = "ion-play";
+              $scope.audio.pause();
+              $interval.cancel($scope.progressTime);
+            }
+          };
+        })
 
       }],
-      template: '<div class="player-module"><div class="module-circle-switch" on-tap="switch()">' +
-      '<div class="module-circle-inner"><div class="circle-inner-black" ><i ng-class="iconSwitch" ' +
-      'style="font-size:30px;color: #f0ad4e" ></i></div></div></div><div class="progress-position">' +
-      '<div ng-bind="currentTime"></div><swipe></swipe>' +
-      '<div ng-bind="totalTime"></div></div></div>',
+      templateUrl: 'templates/listen/audio-player.html',
       link: function(scope, element, attrs) {
-
       }
     }
   })
-  .directive('swipe', function($interval) {
+  .directive('swipe', function($location,$interval) {
     return {
       restrict: 'EA',
       replace: true,
       controller: ['$scope', '$interval', function($scope, $interval) {
 
       }],
-      template:'<div class="progress progress-style" on-touch="touchdown($event)" ' +
+      template:'<div class="progress" on-touch="touchdown($event)" ' +
       'on-release="reStartAudio()" on-drag="swipe($event)" > ' +
-      '<span class="blue" ng-style="progressCent"></span></div>',
+      '<span class="orange" ng-style="progressCent"></span></div>',
       link: function($scope, element, attrs) {
         $scope.touchdown=function($event){
           $scope.audio.pause();
