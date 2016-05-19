@@ -60,6 +60,8 @@ angular.module('ionicApp', ['ionic', 'app.listen-controllers', 'app.speak-contro
         }
       })
 
+
+
       .state('tabs.listen-list', {
         url: "/:tid",
         views: {
@@ -70,7 +72,7 @@ angular.module('ionicApp', ['ionic', 'app.listen-controllers', 'app.speak-contro
         }
       })
       .state('tabs.listen-practice', {
-        url: "/:sid",
+        url: "/:tpoid/:sid",
         views: {
           'list-tab': {
             templateUrl: "templates/listen/practice-root.html",
@@ -89,6 +91,7 @@ angular.module('ionicApp', ['ionic', 'app.listen-controllers', 'app.speak-contro
         }
       })
 
+
       .state('tabs.listen-test', {
         url: "/:sid",
         views: {
@@ -104,7 +107,8 @@ angular.module('ionicApp', ['ionic', 'app.listen-controllers', 'app.speak-contro
           'listen-root': {
             templateUrl: function(routeParams) {
               return 'templates/listen/' + routeParams.template + '.html'
-            }
+            },
+            controller:'answerCtrl'
           }
         }
       })
@@ -119,7 +123,7 @@ angular.module('ionicApp', ['ionic', 'app.listen-controllers', 'app.speak-contro
         }
       })
       .state('tabs.speak-page', {
-        url: "/:sid",
+        url: "/:tpoid/:sid",
         views: {
           'list-tab': {
             templateUrl: "templates/speak/speak-root-page.html",
@@ -144,7 +148,7 @@ angular.module('ionicApp', ['ionic', 'app.listen-controllers', 'app.speak-contro
 
   /*root controller*/
   .controller('rootTabCtrl', ['$scope', function($scope) {
-    $scope.tpoNo = 'list';
+    $scope.tpoNo = '';
     $scope.$on('from.list', function(evt, data) {
       $scope.topNo = data;
     })

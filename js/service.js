@@ -160,6 +160,7 @@ function ToeflQuestion(objQuestion) {
     numAnswers = this.answer.length;
   }
 
+  this.showAnswer=false;
   this.numAnswers = numAnswers;   // Never change this!
   if (this.type == 'MultipleChoice' && this.numAnswers > 1) {
     this.answer.length = 0; // @todo

@@ -19,7 +19,7 @@
               <!-- 单选题 -->
               <div ng-switch-when="1" class="checkbox" ng-repeat="choice in question.choices">
                 <label>
-                  <input style="display: inline-block;" type="radio" ng-model="question.answer[0]" ng-value="choice.id">
+                  <input style="display: inline-block;" type="radio" ng-model="question.answer[0]" ng-value="choice.key">
                   {{ choice.value }}
                 </label>
               </div>

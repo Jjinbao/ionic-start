@@ -1,3 +1,35 @@
-<div>
-  this page is for end test
-</div>
+<ion-list can-swipe="listCanSwipe">
+  <ion-item>
+    <div class="row header" style="background-color: grey;font-weight: bold;">
+      <div class="col col-10">
+        No.
+      </div>
+      <div class="col col-30">
+        yours
+      </div>
+      <div class="col col-30">
+        right
+      </div>
+      <div class="col col-30">
+        go
+      </div>
+    </div>
+  </ion-item>
+  <ion-item ng-repeat="question in resultQuestions">
+    <div class="row" class="calm-bg">
+      <div class="col col-10">
+        {{question.number}}
+      </div>
+      <div class="col col-30">
+        {{question.answer[0]}}
+      </div>
+      <div class="col col-30">
+        A
+      </div>
+      <div class="col col-30">
+
+      </div>
+
+    </div>
+  </ion-item>
+</ion-list>

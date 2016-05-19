@@ -1,4 +1,4 @@
-<!--<toefl-sound resource="question.questionSound" complete-event="question.sound-complete" replay-again="{{question.questionStartPoint}}"></toefl-sound>-->
+<toefl-sound resource="question.questionSound" complete-event="question.sound-complete" replay-again="{{question.questionStartPoint}}"></toefl-sound>
 
 <div class="row" ng-switch on="question.type" style="margin-top: 20px;">
   <div style="width: 100%; margin-left: auto; margin-right: auto;">
@@ -13,20 +13,26 @@
               <!-- 单选题 -->
               <div ng-switch-when="1" class="checkbox" ng-repeat="choice in question.choices">
                 <label>
-                  <input style="display: inline-block;" type="radio" ng-model="question.answer[0]" ng-value="choice.id">
+                  <input style="display: inline-block;" type="radio"
+                         ng-model="question.answer[0]"
+                         ng-value="choice.id">
                   {{ choice.value }}
                 </label>
               </div>
               <!-- 多选题 -->
               <div ng-switch-default class="checkbox" ng-repeat="choice in question.choices">
                 <label>
-                  <input style="display: inline-block" type="checkbox" ng-checked="choice.rightAnswer" checklist-model="question.answer" checklist-value="choice.id">
+                  <input style="display: inline-block" type="checkbox"
+                         checklist-model="question.answer" checklist-value="choice.id">
                   {{ choice.value }}
                 </label>
               </div>
             </form>
           </li>
         </ol>
+        <div ng-show="question.showAnswer">
+          我已经完成这一题了
+        </div>
       </div>
 
       <div ng-switch-when="Sequence">

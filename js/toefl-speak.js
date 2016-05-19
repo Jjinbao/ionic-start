@@ -2,10 +2,10 @@
  * Created by lenovo on 2016/5/16.
  */
 angular.module('app.speak-controllers', [])
-  .controller('tpoSpeakList', ['$scope', '$ionicHistory', '$location', '$state',
-    function($scope, $ionicHistory, $location, $state) {
+  .controller('tpoSpeakList', ['$scope', '$ionicHistory', '$location', '$state', '$stateParams',
+    function($scope, $ionicHistory, $location, $state, $stateParams) {
       //console.log($location.url());
-      $scope.navTime=false;
+      $scope.navTime = false;
       $scope.speakSectionList = [
         {name: 'Question 1', id: '1'},
         {name: 'Question 2', id: '2'},
@@ -18,8 +18,8 @@ angular.module('app.speak-controllers', [])
         $ionicHistory.goBack();
       }
       $scope.startSpeak = function(id) {
-        if (id == 1 || id == 2) {
-          $state.go('tabs.speak-page.son', {template: 'ready-recording', sid: id});//嵌套跳转
+        /*if (id == 1 || id == 2) {
+          $state.go('tabs.speak-page.son', {template: 'ready-recording', sid: id,tpoid});//嵌套跳转
         }
         if (id == 3 || id == 4) {
           $state.go('tabs.speak-page.son', {template: 'read-material', sid: id});//嵌套跳转
@@ -27,7 +27,8 @@ angular.module('app.speak-controllers', [])
         if (id == 5 || id == 6) {
           $state.go('tabs.speak-page.son', {template: 'speaking-listen', sid: id});//嵌套跳转
         }
-        $scope.id = id;
+        $scope.id = id;*/
+        $state.go('tabs.speak-page.son', {template: 'ready-recording', sid: id, tpoid:$stateParams.tid});
       }
     }])
 
@@ -49,15 +50,15 @@ angular.module('app.speak-controllers', [])
       };
       //get data
       $scope.$watchCollection('section', function(section) {
-        if (section.uuid) {
-          $scope.unit = $scope.section.units[1];
+        if (section && section.uuid) {
+          $scope.unit = $scope.section.units[0];
+          console.log($scope.unit);
           route_sequence = make_up_route_sequence(section);
           $scope.continue();
         }
       });
-
       $scope.section = sectionService.section;
-      sectionService.retrieve($location.search().uuid);
+      sectionService.retrieve('speak3');
 
       //get clock
       $scope.$on('toefl-clock', function(event, clock) {
@@ -69,19 +70,19 @@ angular.module('app.speak-controllers', [])
         //console.log($scope.id);
 
         //题型一
-        if(2==1) {
+        if (2 == 1) {
           sequence.push('ready-recording');
           return sequence;
         }
         //题型二
-        if(2==2) {
-        sequence.push('read-material');
-        sequence.push('speaking-listen');
-        sequence.push('ready-recording');
-        return sequence;
+        if (2 == 2) {
+          sequence.push('read-material');
+          sequence.push('speaking-listen');
+          sequence.push('ready-recording');
+          return sequence;
         }
         //题型三
-        if(2==1){
+        if (2 == 1) {
           sequence.push('speaking-listen');
           sequence.push('ready-recording');
           return sequence;
@@ -109,7 +110,6 @@ angular.module('app.speak-controllers', [])
         recordingViewSoundEnd();
       };//recording complate
       var route_according_to_sequence = function(obj) {
-         console.log(window)
         if (cursor == 0) {
           $scope.$watch('clockSignal', function(newVal) {
             if (newVal == 1) {
@@ -331,7 +331,7 @@ angular.module('app.speak-controllers', [])
         };
 
         function show_or_hide_time() {
-          hide_clock = ! hide_clock;
+          hide_clock = !hide_clock;
           if (hide_clock) {
             element.find('label').css({display: 'none'});
             element.find('button').text('SHOW TIME');

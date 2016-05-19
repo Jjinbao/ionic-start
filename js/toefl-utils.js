@@ -79,7 +79,7 @@ angular.module('toefl.utils', ['ngAudio'])
               if (sound) {
                 sound.play();
                 intervalId = $interval(function() {
-                  $scope.progress = sound.progress;
+                  $scope.progress = {'width':Math.floor(sound.progress*100)+'%'};
                 }, 500);
 
                 sound.complete(function() {
@@ -113,23 +113,6 @@ angular.module('toefl.utils', ['ngAudio'])
     };
   }])
 
-  /*.directive('toeflToolbar', [function() {
-    return {
-      restrict: 'C',
-      scope: false,
-      templateUrl: 'templates/toefl-toolbar.html',
-
-      compile: function(element) {
-        var buttons = angular.element(element).find('button');
-        angular.forEach(buttons, function(btn) {
-          btn = angular.element(btn);
-          var btn_name = btn.attr('name');
-          btn.attr('ng-show', "toolbar.hasOwnProperty('" + btn_name + "')")
-            .attr('ng-disabled', 'toolbar.' + btn_name + '===false');
-        })
-      }
-    };
-  }])*/
 
   .directive('toeflClock', ['$interval', function($interval) {
     return {
@@ -285,6 +268,7 @@ angular.module('toefl.utils', ['ngAudio'])
       }
     };
   }])
+
   .directive('audioPlayer', function($location) {
     return {
       restrict: 'EA',
@@ -295,34 +279,39 @@ angular.module('toefl.utils', ['ngAudio'])
       controller: ['$scope', '$interval', function($scope, $interval) {
         $scope.currentTime = "00 : 00";
         $scope.audio = document.createElement("audio");
+        $scope.canPlayButtonUsed=true;
 
         $scope.shift = 0;
         $scope.iconSwitch = "ion-play";
         $scope.totalTime = "00 : 00";
+
         $scope.$watch('audioUrl', function(value) {
           if(value){
-
+            $scope.audioUrl=value;
+            angular.element($scope.audio).attr("src",$scope.audioUrl);
           }
+        })
           var firstCanPlay=true;
-          $scope.audioUrl=value;
-          angular.element($scope.audio).attr("src",$scope.audioUrl);
+          //when the sound can play
           $scope.audio.addEventListener('canplay', function() {
-            console.log('canplay');
             if(firstCanPlay) {
               firstCanPlay=false;
               $scope.totalTime = $scope.format_remaining_seconds($scope.audio.duration);
               $scope.switch();
             }
           }, false);
+
+          //play end
           $scope.audio.addEventListener('ended',function(){
             $scope.shift=0;
             $scope.iconSwitch = "ion-play";
             $interval.cancel($scope.progressTime);
             $scope.audio.currentTime=0;
-            $scope.$digest();
           });
+
           var centValue = "0%";
           $scope.progressCent = {"width": centValue};
+
           $scope.format_remaining_seconds=function(num_seconds) {
             num_seconds=Math.floor(num_seconds);
             var seconds = num_seconds % 60;
@@ -335,34 +324,53 @@ angular.module('toefl.utils', ['ngAudio'])
             }
             return minutes + ' : ' + seconds;
           };
+
           $scope.progress=function() {
             $scope.currentTime = $scope.format_remaining_seconds($scope.audio.currentTime);
             var centValue = ($scope.audio.currentTime / $scope.audio.duration) * 100 + "%";
             $scope.progressCent = {"width": centValue};
-
           };
 
           $scope.switch = function() {
-            if ($scope.shift == 0) {
-              $scope.shift = 1;
-              $scope.iconSwitch = "ion-pause";
-              $scope.audio.play();
-              $scope.progressTime=$interval($scope.progress, 500);
-            } else {
-              $scope.shift = 0;
-              $scope.iconSwitch = "ion-play";
-              $scope.audio.pause();
-              $interval.cancel($scope.progressTime);
+            if($scope.canPlayButtonUsed){
+              if ($scope.shift == 0) {
+                $scope.shift = 1;
+                $scope.iconSwitch = "ion-pause";
+                $scope.audio.play();
+                $scope.progressTime=$interval($scope.progress, 500);
+              } else {
+                $scope.shift = 0;
+                $scope.iconSwitch = "ion-play";
+                $scope.audio.pause();
+                $interval.cancel($scope.progressTime);
+              }
             }
           };
 
+        //stop and can't play sound
+        $scope.$on('stop.and.disabled',function(evt,data){
+          if($scope.shift==1){
+            $scope.switch();
+          }
+          $scope.canPlayButtonUsed=false;
+        });
 
-          $scope.$on('$destroy', function() {
-            if ($scope.audio) {
-              $scope.audio.pause();
-            }
-          });
+        //user can play sound
+        $scope.$on('can.againplay.sound',function(evt,data){
+          $scope.canPlayButtonUsed=true;
         })
+
+
+        $scope.$on('$destroy', function() {
+          if ($scope.audio) {
+            $scope.audio.pause();
+          }
+
+          if($scope.progressTime){
+            $interval.cancel($scope.progressTime);
+          }
+        });
+
 
       }],
       templateUrl: 'templates/listen/audio-player.html',
@@ -374,9 +382,6 @@ angular.module('toefl.utils', ['ngAudio'])
     return {
       restrict: 'EA',
       replace: true,
-      controller: ['$scope', '$interval', function($scope, $interval) {
-
-      }],
       template:'<div class="progress" on-touch="touchdown($event)" ' +
       'on-release="reStartAudio()" on-drag="swipe($event)" > ' +
       '<span class="orange" ng-style="progressCent"></span></div>',
