@@ -4,8 +4,6 @@
 angular.module('app.speak-controllers', [])
   .controller('tpoSpeakList', ['$scope', '$ionicHistory', '$state', '$stateParams',
     function($scope, $ionicHistory, $state, $stateParams) {
-      //console.log($location.url());
-      console.log($stateParams.tid);
       $scope.navTime = false;
       $scope.speakSectionList = [
         {name: 'Question 1', id: '1'},
@@ -43,16 +41,11 @@ angular.module('app.speak-controllers', [])
         }
         $ionicHistory.goBack();
       };
-      console.log($stateParams.sid);
-      console.log($stateParams.tpoid);
-      //get data
       $scope.section = sectionService.section;
       $scope.$watchCollection('section', function(section) {
         if (section && section.uuid) {
           $scope.unit = $scope.section.units[0];
-          console.log($scope.unit);
           route_sequence = make_up_route_sequence($scope.unit);
-          //$scope.continue();
         }
       });
 

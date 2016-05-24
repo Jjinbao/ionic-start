@@ -11,7 +11,7 @@
 
             <form class="answer-choices" ng-switch on="question.numAnswers">
               <!-- 单选题 -->
-              <div ng-switch-when="1" class="checkbox" ng-repeat="choice in question.choices">
+              <div ng-switch-when="1" class="checkbox checkbox-calm" ng-repeat="choice in question.choices">
                 <label>
                   <input style="display: inline-block;" type="radio"
                          ng-model="question.answer[0]"

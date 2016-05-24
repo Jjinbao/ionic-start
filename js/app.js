@@ -172,7 +172,7 @@ angular.module('ionicApp', ['ionic', 'app.listen-controllers', 'app.speak-contro
 
   }])
   .controller('setCtrl',['$scope',function($scope){
-    console.log('setCtrl');
+
   }])
 
   /*list controller*/

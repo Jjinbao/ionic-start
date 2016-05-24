@@ -175,7 +175,6 @@ angular.module('toefl.utils', ['ngAudio'])
             }
           },
           hide: function() {
-            console.log('--------obj hideClock--------------');
             $scope.hideClock();
           }
         };
@@ -208,11 +207,9 @@ angular.module('toefl.utils', ['ngAudio'])
 
           if (remaining_seconds === 0) {
             if ($scope.timeoutEvent) {
-              console.log($scope.timeoutEvent);
 
             }
             if ($scope.timeout) {
-              console.log('time out');
               $scope.timeout();
             }
           }
@@ -227,7 +224,6 @@ angular.module('toefl.utils', ['ngAudio'])
             .find('label').text(format_remaining_seconds(seconds));
         };
         $scope.hideClock = function() {
-          console.log('--------hideClock--------------');
           element.css({display: 'none'});
         };
         $scope.disableButton = function() {
@@ -418,7 +414,6 @@ angular.module('toefl.utils', ['ngAudio'])
               $scope.resUrl = getListenUrl(newVal);
             } else {
               $scope.resUrl = getSpeakingUrl(newVal);
-              console.log($scope.resUrl);
             }
 
             $scope.preload = new createjs.LoadQueue(true);
@@ -427,9 +422,7 @@ angular.module('toefl.utils', ['ngAudio'])
             //$scope.preload.on("fileload", handleFileLoad);
             $scope.preload.on("progress", function(event) {
               myBarWidth=$scope.preload.progress*100;
-              console.log(myBarWidth);
               $scope.barWidth={width:myBarWidth+'%'};
-              console.log($scope.barWidth);
             });
             $scope.preload.on("complete", function(event) {
               $scope.barWidth={width:'100%'};
@@ -437,7 +430,6 @@ angular.module('toefl.utils', ['ngAudio'])
               $scope.complete();
             });
             $scope.preload.on("error", function(evt) {
-              console.log("加载出错！", evt.text);
             });
             $scope.preload.loadManifest($scope.resUrl);
           }

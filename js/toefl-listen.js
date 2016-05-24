@@ -3,7 +3,6 @@ angular.module('app.listen-controllers', ['checklist-model'])
   /*听力列表controller*/
   .controller('tpoListenList', ['$scope', '$ionicHistory', '$state', '$stateParams',
     function($scope, $ionicHistory, $state, $stateParams) {
-      console.log($stateParams.tid);
       $scope.listenSectionList = [
         {name: 'Conversation 1', id: 'C1'},
         {name: 'Lecture 1', id: 'L1'},
@@ -37,7 +36,6 @@ angular.module('app.listen-controllers', ['checklist-model'])
         }
       });
 
-      //console.log($location.url());
       sectionService.retrieve('48');
 
       $scope.$on('toefl-clock', function(event, clock) {
@@ -123,7 +121,7 @@ angular.module('app.listen-controllers', ['checklist-model'])
           if (res) {
             $ionicHistory.goBack();
           } else {
-            //console.log('You are not sure');
+
           }
         });
       };
@@ -162,7 +160,6 @@ angular.module('app.listen-controllers', ['checklist-model'])
       $scope.$watchCollection('section', function(newVal) {
         if (newVal.uuid) {
           $scope.sences = make_up_route_sequence($scope.section);
-          console.log($scope.section);
         }
       });
 
