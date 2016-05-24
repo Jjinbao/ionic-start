@@ -92,6 +92,18 @@
     background-image: linear-gradient(to bottom, #f8da9c 0%, #f5c462 70%, #f2b63c 100%);
 }
 /*progressbar end*/
+
+.option-style{
+    margin-top: -30px;
+    margin-left: 35px;
+    font-size: 16px;
+
+}
+
+.option-answer{
+    color: green;
+    text-decoration: underline;
+}
 /*preload bar style*/
 .progress-back{
     position: relative;

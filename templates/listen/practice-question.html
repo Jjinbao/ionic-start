@@ -15,23 +15,25 @@
                 <label>
                   <input style="display: inline-block;" type="radio"
                          ng-model="question.answer[0]"
-                         ng-value="choice.id">
-                  {{ choice.value }}
+                         ng-value="choice.key"
+                         ng-disabled="question.showAnswer">
+                  <p class="option-style" ng-class="{true:'option-answer',false:''}[question.showAnswer&&choice.rightAnswer]">{{ choice.value }}</p>
                 </label>
               </div>
               <!-- 多选题 -->
               <div ng-switch-default class="checkbox checkbox-calm" ng-repeat="choice in question.choices">
                 <label>
                   <input style="display: inline-block" type="checkbox"
-                         checklist-model="question.answer" checklist-value="choice.id">
-                  {{ choice.value }}
+                         ng-disabled="question.showAnswer"
+                         checklist-model="question.answer" checklist-value="choice.key">
+                  <p class="option-style" ng-class="{true:'option-answer',false:''}[question.showAnswer&&choice.rightAnswer]">{{ choice.value }}</p>
                 </label>
               </div>
             </form>
           </li>
         </ol>
         <div ng-show="question.showAnswer" class="calm-bg">
-          显示正确答案和非正确答案的对比和对错情况
+          {{question.answer[0]}}
         </div>
       </div>
 

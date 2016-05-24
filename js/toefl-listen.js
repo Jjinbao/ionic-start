@@ -261,6 +261,7 @@ angular.module('app.listen-controllers', ['checklist-model'])
       $scope.correctAnswer = [];
       $scope.showAnswer = function() {
         $scope.question.showAnswer = true;
+        console.log($scope.question.answer);
       }
 
       //now question number
