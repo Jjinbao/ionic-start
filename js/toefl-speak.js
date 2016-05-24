@@ -351,8 +351,7 @@ angular.module('app.speak-controllers', [])
           if (minutes < 10) {
             minutes = '0' + minutes;
           }
-          var hours = '0' + Math.floor(num_seconds / 3600);
-          return hours + ' : ' + minutes + ' : ' + seconds;
+          return minutes + ' : ' + seconds;
         }
       }
     };

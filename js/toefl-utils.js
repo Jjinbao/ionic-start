@@ -2,7 +2,7 @@
 
 angular.module('toefl.utils', ['ngAudio'])
 
-  .directive('toeflSound', ['ngAudio', '$interval', function(ngAudio,$interval) {
+  .directive('toeflSound', ['ngAudio', '$interval', function(ngAudio, $interval) {
     return {
       restrict: 'E',
       scope: {
@@ -21,11 +21,11 @@ angular.module('toefl.utils', ['ngAudio'])
             $scope.autoPlay = attrs.autoPlay ? angular.fromJson(attrs.autoPlay) : true;
             if ($scope.autoPlay) {
               sound.play();
-              if(attrs.replayAgain>0){
-                var intervalId=$interval(function(){
+              if (attrs.replayAgain > 0) {
+                var intervalId = $interval(function() {
                   $interval.cancel(intervalId);
-                  $scope.$emit('listen.again.notic','listen again complete');
-                },attrs.replayAgain)
+                  $scope.$emit('listen.again.notic', 'listen again complete');
+                }, attrs.replayAgain)
               }
             }
 
@@ -79,11 +79,11 @@ angular.module('toefl.utils', ['ngAudio'])
               if (sound) {
                 sound.play();
                 intervalId = $interval(function() {
-                  $scope.progress = {'width':Math.floor(sound.progress*100)+'%'};
+                  $scope.progress = {'width': Math.floor(sound.progress * 100) + '%'};
                 }, 500);
 
                 sound.complete(function() {
-                  $scope.progress = 1.0;
+                  //$scope.progress = 1.0;
                   $interval.cancel(intervalId);
                   intervalId = null;
 
@@ -222,11 +222,11 @@ angular.module('toefl.utils', ['ngAudio'])
       link: function($scope, element) {
         //var hide_clock = false;
         /*element.css({display: 'none'})
-          .find('button')
-          .attr('disabled', 'disabled')
-          .on('click', function() {
-            show_or_hide_time();
-          });*/
+         .find('button')
+         .attr('disabled', 'disabled')
+         .on('click', function() {
+         show_or_hide_time();
+         });*/
 
         $scope.showClock = function(seconds) {
           element.css({display: 'block'})
@@ -243,16 +243,16 @@ angular.module('toefl.utils', ['ngAudio'])
         };
 
         /*function show_or_hide_time() {
-          hide_clock = ! hide_clock;
-          if (hide_clock) {
-            element.find('label').css({display: 'none'});
-            element.find('button').text('SHOW TIME');
-          }
-          else {
-            element.find('label').css({display: null});
-            element.find('button').text('HIDE TIME');
-          }
-        }*/
+         hide_clock = ! hide_clock;
+         if (hide_clock) {
+         element.find('label').css({display: 'none'});
+         element.find('button').text('SHOW TIME');
+         }
+         else {
+         element.find('label').css({display: null});
+         element.find('button').text('HIDE TIME');
+         }
+         }*/
 
         function format_remaining_seconds(num_seconds) {
           var seconds = num_seconds % 60;
@@ -273,91 +273,92 @@ angular.module('toefl.utils', ['ngAudio'])
     return {
       restrict: 'EA',
       replace: true,
-      scope:{
-        audioUrl:'<'
+      scope: {
+        audioUrl: '<'
       },
       controller: ['$scope', '$interval', function($scope, $interval) {
         $scope.currentTime = "00 : 00";
         $scope.audio = document.createElement("audio");
-        $scope.canPlayButtonUsed=true;
+        $scope.canPlayButtonUsed = true;
 
         $scope.shift = 0;
         $scope.iconSwitch = "ion-play";
         $scope.totalTime = "00 : 00";
 
         $scope.$watch('audioUrl', function(value) {
-          if(value){
-            $scope.audioUrl=value;
-            angular.element($scope.audio).attr("src",$scope.audioUrl);
+          if (value) {
+            $scope.audioUrl = value;
+            angular.element($scope.audio).attr("src", $scope.audioUrl);
           }
         })
-          var firstCanPlay=true;
-          //when the sound can play
-          $scope.audio.addEventListener('canplay', function() {
-            if(firstCanPlay) {
-              firstCanPlay=false;
-              $scope.totalTime = $scope.format_remaining_seconds($scope.audio.duration);
-              $scope.switch();
-            }
-          }, false);
-
-          //play end
-          $scope.audio.addEventListener('ended',function(){
-            $scope.shift=0;
-            $scope.iconSwitch = "ion-play";
-            $interval.cancel($scope.progressTime);
-            $scope.audio.currentTime=0;
-          });
-
-          var centValue = "0%";
-          $scope.progressCent = {"width": centValue};
-
-          $scope.format_remaining_seconds=function(num_seconds) {
-            num_seconds=Math.floor(num_seconds);
-            var seconds = num_seconds % 60;
-            if (seconds < 10) {
-              seconds = '0' + seconds;
-            }
-            var minutes = Math.floor(num_seconds / 60) % 60;
-            if (minutes < 10) {
-              minutes = '0' + minutes;
-            }
-            return minutes + ' : ' + seconds;
-          };
-
-          $scope.progress=function() {
-            $scope.currentTime = $scope.format_remaining_seconds($scope.audio.currentTime);
-            var centValue = ($scope.audio.currentTime / $scope.audio.duration) * 100 + "%";
-            $scope.progressCent = {"width": centValue};
-          };
-
-          $scope.switch = function() {
-            if($scope.canPlayButtonUsed){
-              if ($scope.shift == 0) {
-                $scope.shift = 1;
-                $scope.iconSwitch = "ion-pause";
-                $scope.audio.play();
-                $scope.progressTime=$interval($scope.progress, 500);
-              } else {
-                $scope.shift = 0;
-                $scope.iconSwitch = "ion-play";
-                $scope.audio.pause();
-                $interval.cancel($scope.progressTime);
-              }
-            }
-          };
-
-        //stop and can't play sound
-        $scope.$on('stop.and.disabled',function(evt,data){
-          if($scope.shift==1){
+        var firstCanPlay = true;
+        //when the sound can play
+        $scope.audio.addEventListener('canplay', function() {
+          if (firstCanPlay) {
+            firstCanPlay = false;
+            $scope.totalTime = $scope.format_remaining_seconds($scope.audio.duration);
             $scope.switch();
           }
-          $scope.canPlayButtonUsed=false;
+        }, false);
+
+        //play end
+        $scope.audio.addEventListener('ended', function() {
+          $scope.shift = 0;
+          $scope.iconSwitch = "ion-play";
+          $scope.progressCent = {"width": "0"};
+          $interval.cancel($scope.progressTime);
+          $scope.audio.currentTime = 0;
+        });
+
+        var centValue = "0";
+        $scope.progressCent = {"width": centValue};
+
+        $scope.format_remaining_seconds = function(num_seconds) {
+          num_seconds = Math.floor(num_seconds);
+          var seconds = num_seconds % 60;
+          if (seconds < 10) {
+            seconds = '0' + seconds;
+          }
+          var minutes = Math.floor(num_seconds / 60) % 60;
+          if (minutes < 10) {
+            minutes = '0' + minutes;
+          }
+          return minutes + ' : ' + seconds;
+        };
+
+        $scope.progress = function() {
+          $scope.currentTime = $scope.format_remaining_seconds($scope.audio.currentTime);
+          var centValue = ($scope.audio.currentTime / $scope.audio.duration) * 100 + "%";
+          $scope.progressCent = {"width": centValue};
+        };
+
+        $scope.switch = function() {
+          if ($scope.canPlayButtonUsed) {
+            if ($scope.shift == 0) {
+              $scope.shift = 1;
+              $scope.iconSwitch = "ion-pause";
+              $scope.audio.play();
+              $scope.progressTime = $interval($scope.progress, 500);
+            } else {
+              $scope.shift = 0;
+              $scope.iconSwitch = "ion-play";
+              $scope.audio.pause();
+              $interval.cancel($scope.progressTime);
+            }
+          }
+        };
+
+        //stop and can't play sound
+        $scope.$on('stop.and.disabled', function(evt, data) {
+          if ($scope.shift == 1) {
+            $scope.switch();
+          }
+          $scope.canPlayButtonUsed = false;
         });
 
         //user can play sound
-        $scope.$on('can.againplay.sound',function(evt,data){
-          $scope.canPlayButtonUsed=true;
+        $scope.$on('can.againplay.sound', function(evt, data) {
+          $scope.canPlayButtonUsed = true;
         })
 
 
@@ -366,7 +367,7 @@ angular.module('toefl.utils', ['ngAudio'])
             $scope.audio.pause();
           }
 
-          if($scope.progressTime){
+          if ($scope.progressTime) {
             $interval.cancel($scope.progressTime);
           }
         });
@@ -378,37 +379,133 @@ angular.module('toefl.utils', ['ngAudio'])
       }
     }
   })
-  .directive('swipe', function($location,$interval) {
+
+  .directive('swipe', function() {
     return {
       restrict: 'EA',
       replace: true,
-      template:'<div class="progress" on-touch="touchdown($event)" ' +
+      template: '<div class="progress" on-touch="touchdown($event)" ' +
       'on-release="reStartAudio()" on-drag="swipe($event)" > ' +
-      '<span class="orange" ng-style="progressCent"></span></div>',
+      '<span class="orange" style="position: absolute;" ng-style="progressCent"></span></div>',
       link: function($scope, element, attrs) {
-        $scope.touchdown=function($event){
+        $scope.touchdown = function($event) {
           $scope.audio.pause();
-          var progressWidth=$event.gesture.center.pageX - element[0].offsetLeft;
-          var progressAllWidth=element[0].scrollWidth;
-          var centValue=(progressWidth/progressAllWidth)*100+"%";
-          $scope.progressCent={"width": centValue};
-          $scope.audio.currentTime=(progressWidth/progressAllWidth)*$scope.audio.duration;
-          $scope.currentTime = $scope.format_remaining_seconds((progressWidth/progressAllWidth)*$scope.audio.duration)
+          var progressWidth = $event.gesture.center.pageX - element[0].offsetLeft;
+          var progressAllWidth = element[0].scrollWidth;
+          var centValue = (progressWidth / progressAllWidth) * 100 + "%";
+          $scope.progressCent = {"width": centValue};
+          $scope.audio.currentTime = (progressWidth / progressAllWidth) * $scope.audio.duration;
+          $scope.currentTime = $scope.format_remaining_seconds((progressWidth / progressAllWidth) * $scope.audio.duration)
         };
-        $scope.reStartAudio=function(){
-          if($scope.shift==1){
+        $scope.reStartAudio = function() {
+          if ($scope.shift == 1) {
             $scope.audio.play();
           }
         };
-        $scope.swipe=function($event){
-          var progressWidth=$event.gesture.center.pageX - element[0].offsetLeft;
-          var progressAllWidth=element[0].scrollWidth;
-          var centValue=(progressWidth/progressAllWidth)*100+"%";
-          $scope.progressCent={"width": centValue};
-          $scope.audio.currentTime=(progressWidth/progressAllWidth)*$scope.audio.duration;
-          $scope.currentTime = $scope.format_remaining_seconds((progressWidth/progressAllWidth)*$scope.audio.duration)
+        $scope.swipe = function($event) {
+          var progressWidth = $event.gesture.center.pageX - element[0].offsetLeft;
+          var progressAllWidth = element[0].scrollWidth;
+          var centValue = (progressWidth / progressAllWidth) * 100 + "%";
+          $scope.progressCent = {"width": centValue};
+          $scope.audio.currentTime = (progressWidth / progressAllWidth) * $scope.audio.duration;
+          $scope.currentTime = $scope.format_remaining_seconds((progressWidth / progressAllWidth) * $scope.audio.duration)
         };
 
       }
     }
   })
+
+  .directive('preLoadData', [function() {
+    return {
+      restrict: 'EA',
+      replace: true,
+      scope: {
+        section: '<'
+      },
+      link: function($scope) {
+        $scope.resUrl = [];
+        $scope.$watchCollection('section', function(newVal) {
+          if (newVal && newVal.uuid) {
+            var title = newVal.title;
+            if (title.indexOf('Listening') >= 0) {
+              $scope.resUrl = getListenUrl(newVal);
+            } else {
+              $scope.resUrl = getSpeakingUrl(newVal);
+            }
+
+            $scope.preload = new createjs.LoadQueue(true);
+            //注意加载音频文件需要调用如下代码行
+            $scope.preload.installPlugin(createjs.Sound);
+            //$scope.preload.on("fileload", handleFileLoad);
+            $scope.preload.on("progress", function(event) {
+              console.log($scope.preload.progress);
+            });
+            $scope.preload.on("complete", function(event) {
+              console.log("已加载完");
+            });
+            $scope.preload.on("error", function(evt) {
+              console.log("加载出错！", evt.text);
+            });
+            $scope.preload.loadManifest($scope.resUrl);
+
+            //处理加载错误：大家可以修改成错误的文件地址，可在控制台看到此方法调用
+
+          }
+        });
+
+        function getListenUrl(obj) {
+          var resUrl = [];
+          if (obj.readyToAnswerNotice && obj.readyToAnswerNotice.sound) {
+            resUrl.push({src: obj.readyToAnswerNotice.sound});
+          }
+          ;
+          if (obj.readyToAnswerNotice && obj.readyToAnswerNotice.text) {
+            resUrl.push({src: obj.readyToAnswerNotice.text});
+          }
+          angular.forEach(obj.units, function(unit) {
+            if (unit.listeningScene) {
+              resUrl.push({src: unit.listeningScene});
+            }
+            ;
+            if (unit.listeningSound) {
+              resUrl.push({src: unit.listeningSound});
+            }
+            ;
+            angular.forEach(unit.questions, function(question) {
+              if (question.questionSound) {
+                resUrl.push({src: question.questionSound});
+              }
+
+              if (question.listenAgainNotice && question.listenAgainNotice.text) {
+                resUrl.push({src: question.listenAgainNotice.text});
+              }
+            })
+          });
+          return resUrl;
+        }
+
+        function getSpeakingUrl(obj) {
+          var res = [];
+          if (obj.listenScene) {
+            res.push({src: obj.listenScene});
+          }
+          if (obj.listeningSound) {
+            res.push({src: obj.listeningSound});
+          }
+          if(obj.questionIntro){
+            res.push({src:obj.questionIntro});
+          }
+          if(obj.questionIntroSound){
+            res.push({src:obj.questionIntroSound});
+          }
+          if(obj.questionSound){
+            res.push({src:obj.questionSound});
+          }
+          if(obj.readingIntro){
+            res.push({src:obj.readingIntro});
+          }
+          return res;
+        }
+      }
+    }
+  }])

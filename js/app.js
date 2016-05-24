@@ -59,9 +59,23 @@ angular.module('ionicApp', ['ionic', 'app.listen-controllers', 'app.speak-contro
           }
         }
       })
-
-
-
+      .state('tabs.news', {
+        url: "/news",
+        views: {
+          'news-tab': {
+            templateUrl: "templates/news.html"
+          }
+        }
+      })
+      .state('tabs.set', {
+        url: "/set",
+        views: {
+          'set-tab': {
+            templateUrl: "templates/set.html",
+            controller:'setCtrl'
+          }
+        }
+      })
       .state('tabs.listen-list', {
         url: "/:tid",
         views: {
@@ -90,8 +104,6 @@ angular.module('ionicApp', ['ionic', 'app.listen-controllers', 'app.speak-contro
           }
         }
       })
-
-
       .state('tabs.listen-test', {
         url: "/:sid",
         views: {
@@ -141,9 +153,9 @@ angular.module('ionicApp', ['ionic', 'app.listen-controllers', 'app.speak-contro
 
           }
         }
-      })
+      });
 
-    $urlRouterProvider.otherwise("/tab/list");
+    $urlRouterProvider.otherwise("/tab/home");
   })
 
   /*root controller*/
@@ -158,6 +170,9 @@ angular.module('ionicApp', ['ionic', 'app.listen-controllers', 'app.speak-contro
   /*home controller*/
   .controller('homeCtrl', ['$scope', function($scope) {
 
+  }])
+  .controller('setCtrl',['$scope',function($scope){
+    console.log('setCtrl');
   }])
 
   /*list controller*/
@@ -196,7 +211,6 @@ angular.module('ionicApp', ['ionic', 'app.listen-controllers', 'app.speak-contro
         } else {
           $state.go('tabs.listen-list', {tid: index});
         }
-
       } else {
         $state.go('tabs.speak-list', {tid: index});
       }

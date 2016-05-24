@@ -2,7 +2,7 @@
 
 angular.module('toefl.service', ['ngResource'])
 
-  .value('isTestService',{ text: "我要模拟测试", checked: false })
+  .value('isTestService', {text: "我要模拟测试", checked: false})
 
   .service('sectionService', ['$resource', '$window', function($resource, $window) {
     var section = {};
@@ -30,7 +30,7 @@ angular.module('toefl.service', ['ngResource'])
             else if (value.type === 'Listening') {
               value = new ToeflListeningSection(value);
             }
-            else if(value.type === 'Speaking'){
+            else if (value.type === 'Speaking') {
               value = new ToeflSpeakingSection(value);
             }
             else if (value.type === 'Writing') {
@@ -83,6 +83,7 @@ function ToeflListeningSection(objSection) {
   this.title = objSection.title;
   this.directions = objSection.directions ? new GeneralIntroduction(objSection.directions) : null;
   this.readyToAnswerNotice = objSection.readyToAnswerNotice;
+  this.readyToAnswerNotice.text = this.readyToAnswerNotice.text.substring(this.readyToAnswerNotice.text.indexOf("src=\"") + 5, this.readyToAnswerNotice.text.indexOf("\" /"));
   this.putOnHeadsetNotice = objSection.putOnHeadsetNotice ? new GeneralIntroduction(objSection.putOnHeadsetNotice) : null;
   this.timeLimit = objSection.timeLimit;
 
@@ -160,7 +161,11 @@ function ToeflQuestion(objQuestion) {
     numAnswers = this.answer.length;
   }
 
-  this.showAnswer=false;
+  this.showAnswer = false;
+  if (this.listenAgainNotice && this.listenAgainNotice.text) {
+    var strNotice = this.listenAgainNotice.text;
+    this.listenAgainNotice.text = strNotice.substring(strNotice.indexOf("src=\"") + 5, strNotice.indexOf("\" /"));
+  }
   this.numAnswers = numAnswers;   // Never change this!
   if (this.type == 'MultipleChoice' && this.numAnswers > 1) {
     this.answer.length = 0; // @todo
@@ -197,11 +202,11 @@ function GeneralIntroduction(objIntro) {
   this.sound = objIntro.sound;
 }
 
-function ToeflSpeakingSection(objSection){
+function ToeflSpeakingSection(objSection) {
   this.uuid = objSection.uuid;
   this.title = objSection.title;
   this.directions = objSection.directions ? new GeneralIntroduction(objSection.directions) : null;
-  var units=[];
+  var units = [];
   angular.forEach(objSection.units, function(objUnit) {
     var listening = new ToeflSpeakingTask(objUnit);
     units.push(listening);
@@ -211,24 +216,27 @@ function ToeflSpeakingSection(objSection){
 
 function ToeflSpeakingTask(speakingUnit) {
   this.uuid = speakingUnit.uuid;
-  this.number=speakingUnit.number;
-  this.type=speakingUnit.type;
+  this.number = speakingUnit.number;
+  this.type = speakingUnit.type;
   this.title = speakingUnit.title;
-  this.questionIntro=speakingUnit.questionIntro.text;
-  this.questionIntroSound=speakingUnit.questionIntro.sound;
-  if(speakingUnit.listeningScene && speakingUnit.listeningScene.length!=0) {
-    this.listenScene=speakingUnit.listeningScene[0];
+  if (speakingUnit.questionIntro && speakingUnit.questionIntro.text) {
+    var intro = speakingUnit.questionIntro.text;
+    this.questionIntro = intro.substring(intro.indexOf("src=\"") + 5, intro.indexOf("\" /"));
   }
-  this.listeningSound=speakingUnit.listeningSound;
-  this.preparingTime=speakingUnit.preparingTime;
-  this.responseTime=speakingUnit.responseTime;
-  this.questionSound=speakingUnit.questionSound;
-  this.description=speakingUnit.description;
-  if(speakingUnit.readingIntro&&speakingUnit.readingIntro.sound) {
-    this.readingIntro=speakingUnit.readingIntro.sound;
+  this.questionIntroSound = speakingUnit.questionIntro.sound;
+  if (speakingUnit.listeningScene && speakingUnit.listeningScene.length != 0) {
+    this.listenScene = speakingUnit.listeningScene[0];
   }
-  this.readingText=speakingUnit.readingPassage;
-  this.readingTime=speakingUnit.readingTime;
+  this.listeningSound = speakingUnit.listeningSound;
+  this.preparingTime = speakingUnit.preparingTime;
+  this.responseTime = speakingUnit.responseTime;
+  this.questionSound = speakingUnit.questionSound;
+  this.description = speakingUnit.description;
+  if (speakingUnit.readingIntro && speakingUnit.readingIntro.sound) {
+    this.readingIntro = speakingUnit.readingIntro.sound;
+  }
+  this.readingText = speakingUnit.readingPassage;
+  this.readingTime = speakingUnit.readingTime;
 }
 
 function ToeflWritingSection(objSection) {
@@ -241,27 +249,27 @@ function ToeflWritingSection(objSection) {
   this.number = objSection.units[0].number;
   this.units = objSection.units;
 
-  if (objSection.units[0]&&objSection.units[1]) {
+  if (objSection.units[0] && objSection.units[1]) {
     this.directions = new GeneralIntroduction(objSection.directions);
     this.Integrated = new GeneralIntroduction(objSection.units[0].questionIntro);
     this.read = new writing_read(objSection.units[0]);
     this.listen = new writing_listen(objSection.units[0]);
-    this.writing =new wrting_article(objSection.units[0]);
-    this.unit2Directions=new GeneralIntroduction(objSection.units[1].questionIntro);
-    this.units2Writing=new wrting_article(objSection.units[1]);
+    this.writing = new wrting_article(objSection.units[0]);
+    this.unit2Directions = new GeneralIntroduction(objSection.units[1].questionIntro);
+    this.units2Writing = new wrting_article(objSection.units[1]);
   }
   else {
-    if(objSection.units[0].number==1) {
+    if (objSection.units[0].number == 1) {
       this.directions = new GeneralIntroduction(objSection.directions);
       this.Integrated = new GeneralIntroduction(objSection.units[0].questionIntro);
       this.read = new writing_read(objSection.units[0]);
       this.listen = new writing_listen(objSection.units[0]);
-      this.writing =new wrting_article(objSection.units[0]);
+      this.writing = new wrting_article(objSection.units[0]);
     }
     else {
 
-      this.unit2Directions=new GeneralIntroduction(objSection.units[0].questionIntro);
-      this.units2Writing=new wrting_article(objSection.units[0]);
+      this.unit2Directions = new GeneralIntroduction(objSection.units[0].questionIntro);
+      this.units2Writing = new wrting_article(objSection.units[0]);
     }
   }
 
@@ -278,9 +286,9 @@ function ToeflWritingSection(objSection) {
 
   function wrting_article(objIntro) {
     this.readingPassage = objIntro.readingPassage || "";
-    this.responseTime = objIntro.responseTime||"";
-    this.questionSound =objIntro.questionSound||"";
-    this.description = objIntro.description||"";
+    this.responseTime = objIntro.responseTime || "";
+    this.questionSound = objIntro.questionSound || "";
+    this.description = objIntro.description || "";
   }
 
 }

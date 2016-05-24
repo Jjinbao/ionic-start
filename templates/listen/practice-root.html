@@ -10,33 +10,34 @@
     </button>
   </ion-nav-buttons>
 
-  <ion-content class="has-footer has-subfooter" has-header="true" padding="true">
+  <ion-content class="has-footer" ng-class="{true:'has-subfooter',false:''}[practiceView=='question']" has-header="true"
+               padding="true">
     <div ui-view="practice-root"></div>
   </ion-content>
-
-  <ion-footer-bar class="bar-subfooter positive-bg bar-positive" ng-show="practiceView" ng-disabled="true">
-    <audio-player audio-url="unit.listeningSound"></audio-player>
-  </ion-footer-bar>
-
-  <ion-footer-bar class="bar-footer" ng-show="practiceView">
+  <ion-footer-bar ng-show="practiceView=='question'" class="bar-footer"
+                  ng-class="{true:'bar-subfooter',false:''}[practiceView=='question']">
     <div class="row" style="align-items: center;">
       <div class="col-33">
-        <button class="button" style="width: 100%" ng-disabled="qNumber<=0||practiceView!='question'" ng-click="back()">
+        <button class="button" style="width: 100%" ng-disabled="qNumber<=0||practiceView!='question'||canButtonUsed"
+                ng-click="back()">
           上一题
         </button>
       </div>
       <div class="col-33">
-        <button class="button" style="width: 100%"
+        <button class="button" style="width: 100%" ng-disabled="practiceView!='question'"
                 ng-click="showAnswer()">
           显示答案
         </button>
       </div>
       <div class="col-33">
         <button class="button" style="width: 100%"
-                ng-disabled="!(question.answer &&question.answer[0] && (question.answer.length = question.numAnswers))"
+                ng-disabled="(qNumber==unit.questions.length-1)||practiceView!='question'||canButtonUsed"
                 ng-click="next()">下一题
         </button>
       </div>
     </div>
+  </ion-footer-bar>
+  <ion-footer-bar class="positive-bg bar-positive" ng-show="practiceView" ng-disabled="true">
+    <audio-player style="width: 100%;margin-top: -6px;" audio-url="unit.listeningSound"></audio-player>
   </ion-footer-bar>
 </ion-view>
