@@ -126,7 +126,7 @@ angular.module('ionicApp', ['ionic', 'app.listen-controllers', 'app.speak-contro
       })
 
       .state('tabs.speak-list', {
-        url: "/speak-list",
+        url: "/:tid",
         views: {
           'list-tab': {
             templateUrl: "templates/speak/speak-list.html",

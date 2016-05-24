@@ -1,1 +1,6 @@
-<div>type intro</div>
+<div class="row" ng-show="unit.questionIntro" style="margin-top: 60px;">
+  <div class="col">
+    <img width="100%" src="{{unit.questionIntro}}" style="max-width:100%"></img>
+  </div>
+</div>
+<toefl-sound resource="unit.questionIntroSound" complete="continue()"></toefl-sound>

@@ -1,9 +1,13 @@
-<div class="">
-  <div class="" style="margin: 0 auto;">
-    <img ng-src="{{ scene }}" alt="Scene" style="max-width: 100%;"/>
+<div class="row">
+  <div class="col" style="margin: 0 auto;">
+    <img ng-src="{{ scene }}" alt="Scene" style="width: 100%;"/>
   </div>
-  <div class="progress" style="height: 10px;margin-top: 15px;">
-    <span class="blue" ng-style="progress" style="height: 10px;background-color: grey;"></span>
+</div>
+<div class="row">
+  <div class="col">
+    <div class="progress-back" style="width: 100%;">
+      <div class="progress-bar" ng-style="progress"></div>
+    </div>
   </div>
 </div>
 

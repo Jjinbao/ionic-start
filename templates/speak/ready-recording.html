@@ -1,19 +1,27 @@
-<div class="" style="padding:150px 5px 50px 5px;">
-
-    <div ng-bind-html="unit.description">
+<div>
+  <div class="row" style="padding:60px 5px 50px 5px;">
+    <div class="col">
+      <div ng-bind-html="unit.description"></div>
     </div>
-    <i class="positive block text-center" ng-class="iconType" style="font-size: 80px;"></i>
-    <i class="positive block text-center" ng-class="iconTypePlay" style="font-size: 80px;"
-       on-tap="togglePlay()"></i>
-
-  <speak-clock></speak-clock>
-    <div ng-show="saveData">
-      <button class="button button-positive button-block" ng-click="">保存到本机
-      </button>
-      <button class="button button-positive button-block" ng-click="">上传到服务器
-      </button>
+  </div>
+  <div class="row" ng-show="saveDataShow">
+    <div class="col">
+      <i class="calm block text-center" ng-class="iconType" style="font-size: 80px;"></i>
     </div>
+  </div>
+  <div class="row" ng-show="saveDataShow">
+    <div class="col" style="text-align: center">
+      <span>{{recordTime}}</span>
+    </div>
+  </div>
 
-    <toefl-sound resource="selectSoundFile" complete="changeSoundAndIcon()"></toefl-sound>
-
+  <div ng-hide="saveDataShow">
+    <span class="ion ion-play calm block text-center" style="font-size: 60px;"></span>
+    <button class="button button-positive button-block" ng-click="">保存到手机</button>
+    <button class="button button-positive button-block" ng-click="">提交录音</button>
+    <button class="button button-positive button-block" ng-click="">再录一次</button>
+  </div>
 </div>
+
+<toefl-sound resource="questionSound" complete="questionSoundComplete()"></toefl-sound>
+

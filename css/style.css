@@ -92,3 +92,19 @@
     background-image: linear-gradient(to bottom, #f8da9c 0%, #f5c462 70%, #f2b63c 100%);
 }
 /*progressbar end*/
+/*preload bar style*/
+.progress-back{
+    position: relative;
+    width:80%;
+    margin: 0 auto;
+    height: 4px;
+    background-color: grey;
+}
+
+.progress-bar{
+    position: absolute;
+    height: 4px;
+    transition: all 0.8s ease;
+    background-color: #3acbf5;
+}
+/*end preload bar*/

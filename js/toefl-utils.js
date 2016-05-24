@@ -64,7 +64,6 @@ angular.module('toefl.utils', ['ngAudio'])
 
       link: function($scope, element) {
         $scope.progress = 0.0;
-
         var sound;
         var intervalId;
         $scope.$watch('sound', function(value) {
@@ -176,6 +175,7 @@ angular.module('toefl.utils', ['ngAudio'])
             }
           },
           hide: function() {
+            console.log('--------obj hideClock--------------');
             $scope.hideClock();
           }
         };
@@ -220,19 +220,14 @@ angular.module('toefl.utils', ['ngAudio'])
       }],
 
       link: function($scope, element) {
-        //var hide_clock = false;
-        /*element.css({display: 'none'})
-         .find('button')
-         .attr('disabled', 'disabled')
-         .on('click', function() {
-         show_or_hide_time();
-         });*/
+        var hide_clock = false;
 
         $scope.showClock = function(seconds) {
           element.css({display: 'block'})
             .find('label').text(format_remaining_seconds(seconds));
         };
         $scope.hideClock = function() {
+          console.log('--------hideClock--------------');
           element.css({display: 'none'});
         };
         $scope.disableButton = function() {
@@ -241,18 +236,6 @@ angular.module('toefl.utils', ['ngAudio'])
         $scope.enableButton = function() {
           element.find('button').removeAttr('disabled');
         };
-
-        /*function show_or_hide_time() {
-         hide_clock = ! hide_clock;
-         if (hide_clock) {
-         element.find('label').css({display: 'none'});
-         element.find('button').text('SHOW TIME');
-         }
-         else {
-         element.find('label').css({display: null});
-         element.find('button').text('HIDE TIME');
-         }
-         }*/
 
         function format_remaining_seconds(num_seconds) {
           var seconds = num_seconds % 60;
@@ -420,10 +403,14 @@ angular.module('toefl.utils', ['ngAudio'])
       restrict: 'EA',
       replace: true,
       scope: {
-        section: '<'
+        section: '<',
+        complete:'&'
       },
       link: function($scope) {
         $scope.resUrl = [];
+        var myBarWidth=0;
+        $scope.barWidth={width:myBarWidth+'%'};
+        $scope.isLoadComplete=false;
         $scope.$watchCollection('section', function(newVal) {
           if (newVal && newVal.uuid) {
             var title = newVal.title;
@@ -431,6 +418,7 @@ angular.module('toefl.utils', ['ngAudio'])
               $scope.resUrl = getListenUrl(newVal);
             } else {
               $scope.resUrl = getSpeakingUrl(newVal);
+              console.log($scope.resUrl);
             }
 
             $scope.preload = new createjs.LoadQueue(true);
@@ -438,18 +426,20 @@ angular.module('toefl.utils', ['ngAudio'])
             $scope.preload.installPlugin(createjs.Sound);
             //$scope.preload.on("fileload", handleFileLoad);
             $scope.preload.on("progress", function(event) {
-              console.log($scope.preload.progress);
+              myBarWidth=$scope.preload.progress*100;
+              console.log(myBarWidth);
+              $scope.barWidth={width:myBarWidth+'%'};
+              console.log($scope.barWidth);
             });
             $scope.preload.on("complete", function(event) {
-              console.log("已加载完");
+              $scope.barWidth={width:'100%'};
+              $scope.isLoadComplete=true;
+              $scope.complete();
             });
             $scope.preload.on("error", function(evt) {
               console.log("加载出错！", evt.text);
             });
             $scope.preload.loadManifest($scope.resUrl);
-
-            //处理加载错误：大家可以修改成错误的文件地址，可在控制台看到此方法调用
-
           }
         });
 
@@ -485,6 +475,7 @@ angular.module('toefl.utils', ['ngAudio'])
         }
 
         function getSpeakingUrl(obj) {
+          obj=obj.units[0];
           var res = [];
           if (obj.listenScene) {
             res.push({src: obj.listenScene});
@@ -492,20 +483,27 @@ angular.module('toefl.utils', ['ngAudio'])
           if (obj.listeningSound) {
             res.push({src: obj.listeningSound});
           }
-          if(obj.questionIntro){
-            res.push({src:obj.questionIntro});
+          if (obj.questionIntro) {
+            res.push({src: obj.questionIntro});
           }
-          if(obj.questionIntroSound){
-            res.push({src:obj.questionIntroSound});
+          if (obj.questionIntroSound) {
+            res.push({src: obj.questionIntroSound});
           }
-          if(obj.questionSound){
-            res.push({src:obj.questionSound});
+          if (obj.questionSound) {
+            res.push({src: obj.questionSound});
           }
-          if(obj.readingIntro){
-            res.push({src:obj.readingIntro});
+          if (obj.readingIntro) {
+            res.push({src: obj.readingIntro});
           }
           return res;
         }
-      }
+
+        $scope.$on('$destroy', function() {
+          if(!$scope.isLoadComplete){
+            $scope.preload.close();
+          }
+        });
+      },
+      template: '<div class="progress-back"><div class="progress-bar" ng-style="barWidth"></div></div>'
     }
   }])

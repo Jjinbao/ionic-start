@@ -1,10 +1,9 @@
 <div class="" style="padding-top:50px;padding-bottom:50px;">
   <div class="row" style="padding-top: 20px;">
-    <b class="assertive  " style="margin: 0 auto;">Reading Time {{unit.readingTime}} seconds.</b>
-
+    <b class="assertive " style="margin: 0 auto;">Reading Time {{unit.readingTime}} seconds.</b>
   </div>
 
-  <toefl-sound resource="unit.readingIntro" complete="speakReadSoundEnd()"></toefl-sound>
+  <toefl-sound resource="unit.readingIntro" complete="readSoundComplete()"></toefl-sound>
   <div class="show" style="padding: 10px;text-align: justify">
     <div ng-show="readWordShow" ng-bind-html="unit.readingText"></div>
   </div>
