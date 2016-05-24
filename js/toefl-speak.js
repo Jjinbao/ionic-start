@@ -49,7 +49,7 @@ angular.module('app.speak-controllers', [])
         }
       });
 
-      sectionService.retrieve('speak5');
+      sectionService.retrieve('speak3');
 
       //get clock
       $scope.$on('toefl-clock', function(event, clock) {

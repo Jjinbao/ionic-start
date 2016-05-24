@@ -154,31 +154,20 @@ angular.module('app.listen-controllers', ['checklist-model'])
 
   .controller('listenPracticeCtrl', ['$scope', '$ionicHistory', 'sectionService', '$state', 'isTestService', '$stateParams', '$ionicPopup', '$ionicActionSheet', '$timeout',
     function($scope, $ionicHistory, sectionService, $state, isTestService, $stateParams, $ionicPopup, $ionicActionSheet, $timeout) {
-      var toeflClock;
       $scope.section = sectionService.section;
       $scope.canButtonUsed = true;//控制跳转按钮可不可用
       $scope.$watchCollection('section', function(newVal) {
         if (newVal.uuid) {
           $scope.sences = make_up_route_sequence($scope.section);
+          console.log($scope.section);
         }
       });
-
       sectionService.retrieve('48C1');
-      //listen time out
-      $scope.$on('section.timeout', function(event) {
-        var sequenceLength = $scope.sences.length - 1;
-        route_according_to_sequence($scope.sences[sequenceLength]);
-      });
 
       /*显示题干，开始做题*/
       $scope.$on('question.sound-complete', function() {
         $scope.canButtonUsed = false;
         $scope.$broadcast('can.againplay.sound', '');
-
-      });
-
-      $scope.$on('listen.again.notic', function(evt, data) {
-
       });
 
       $scope.practiceView;
@@ -262,10 +251,6 @@ angular.module('app.listen-controllers', ['checklist-model'])
         }, 5000);
 
       };
-
-      $scope.preLoadRes = function() {
-
-      }
       //listen queues number
       $scope.continue = function() {
         $scope.practiceView = 'image';
