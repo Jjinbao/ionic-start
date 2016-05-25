@@ -60,6 +60,25 @@
           </div>
         </div>
       </div>
+
+      <div ng-switch-when="CategoryTable">
+        <ol type="1" start="{{ question.number }}">
+          <li>
+            <div class="question-description" style="font-size: 16px;padding-left: 8px;" ng-bind-html="question.description"></div>
+          </li>
+        </ol>
+        <div>
+          <div class="checkbox checkbox-calm" ng-repeat="choice in question.choices">
+            <p><span style="font-weight: bold;font-size: 16px;">{{choice.key}}.</span> &nbsp;{{ choice.value }}</p>
+            <div class="row" style="margin-top: -10px;">
+              <label class="col col-50" ng-repeat="option in question.answer" ng-click="testIndex($parent.$index)">
+                <input type="radio" name="{{choice.key}}" ng-disabled="question.showAnswer">
+                <p class="option-style" style="margin-top: -25px;">{{ option.category }}</p>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
   </div>

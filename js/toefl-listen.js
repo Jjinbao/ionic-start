@@ -35,7 +35,7 @@ angular.module('app.listen-controllers', ['checklist-model'])
         }
       });
 
-      sectionService.retrieve('sequence');
+      sectionService.retrieve('table');
 
       $scope.$on('toefl-clock', function(event, clock) {
         toeflClock = clock;
@@ -62,6 +62,14 @@ angular.module('app.listen-controllers', ['checklist-model'])
           delete $scope.question.listenAgainNotice;
         }
       });
+
+      $scope.$watchCollection('question.userAnswer', function(newValue) {
+        if (newValue && newValue[0] && (newValue.length == $scope.question.numAnswers)) {
+          $scope.canButtonUsed = true;
+        } else {
+          $scope.canButtonUsed = false;
+        }
+      })
 
       $scope.$watchCollection('question.answer', function(newValue) {
         if (newValue && newValue[0] && (newValue.length == $scope.question.numAnswers)) {
@@ -160,7 +168,7 @@ angular.module('app.listen-controllers', ['checklist-model'])
           $scope.sences = make_up_route_sequence($scope.section);
         }
       });
-      sectionService.retrieve('sequence');
+      sectionService.retrieve('table');
 
       /*显示题干，开始做题*/
       $scope.$on('question.sound-complete', function() {
@@ -269,6 +277,7 @@ angular.module('app.listen-controllers', ['checklist-model'])
       }
 
       function make_up_route_sequence(section) {
+        console.log(section);
         var sequence = [];
         angular.forEach(section.units, function(unit) {
           angular.forEach(unit.questions, function(question) {
@@ -276,6 +285,10 @@ angular.module('app.listen-controllers', ['checklist-model'])
           })
         });
         return sequence;
+      }
+
+      $scope.testIndex=function(index){
+        console.log(index);
       }
 
       $scope.goBack = function() {

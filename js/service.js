@@ -146,6 +146,7 @@ function ToeflQuestion(objQuestion) {
   var all_answers = []; // array of arrays. Used by is_answered().
   var numAnswers = 0;
   if (this.questionType === 'CategoryChart' || this.questionType === 'CategoryTable') {
+    this.userAnswer=[];
     var type = this.type;
     angular.forEach(this.answer, function(item) {
       all_answers.push(item.answer);
@@ -154,6 +155,10 @@ function ToeflQuestion(objQuestion) {
         item.answer.length = 0; //@todo
       }
     });
+    numAnswers=this.choices.length;
+    for(var n=0;n<numAnswers;n++){
+      this.userAnswer.push('');
+    }
   }else if(this.questionType==='Sequence'){
     var answer=[];
     if(this.answer[0]){
