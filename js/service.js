@@ -27,7 +27,8 @@ angular.module('toefl.service', ['ngResource'])
             if (value.type === 'Reading') {
               value = new ToeflReadingSection(value);
             }
-            else if (value.type === 'Listening') {
+            else if (value.type === 'ToeflListeningSection') {
+              console.log(value);
               value = new ToeflListeningSection(value);
             }
             else if (value.type === 'Speaking') {
@@ -81,10 +82,9 @@ function ToeflReadingSection(objSection) {
 function ToeflListeningSection(objSection) {
   this.uuid = objSection.uuid;
   this.title = objSection.title;
-  this.directions = objSection.directions ? new GeneralIntroduction(objSection.directions) : null;
+  //this.directions = objSection.directions ? new GeneralIntroduction(objSection.directions) : null;
   this.readyToAnswerNotice = objSection.readyToAnswerNotice;
   this.readyToAnswerNotice.text = this.readyToAnswerNotice.text.substring(this.readyToAnswerNotice.text.indexOf("src=\"") + 5, this.readyToAnswerNotice.text.indexOf("\" /"));
-  this.putOnHeadsetNotice = objSection.putOnHeadsetNotice ? new GeneralIntroduction(objSection.putOnHeadsetNotice) : null;
   this.timeLimit = objSection.timeLimit;
 
   var tasks = [];
@@ -133,7 +133,7 @@ function ToeflListeningTask(objTask) {
   this.uuid = objTask.uuid;
   this.title = objTask.title;
   this.listeningSound = objTask.listeningSound;
-  this.listeningScene = objTask.listeningScene[0];
+  this.listeningScene = objTask.listeningScene;
   this.questions = [];
 
   for (var i = 0; i < objTask.questions.length; i++) {
@@ -143,10 +143,9 @@ function ToeflListeningTask(objTask) {
 
 function ToeflQuestion(objQuestion) {
   angular.copy(objQuestion, this);
-
   var all_answers = []; // array of arrays. Used by is_answered().
   var numAnswers = 0;
-  if (this.type === 'CategoryChart' || this.type === 'CategoryTable') {
+  if (this.questionType === 'CategoryChart' || this.questionType === 'CategoryTable') {
     var type = this.type;
     angular.forEach(this.answer, function(item) {
       all_answers.push(item.answer);
@@ -155,8 +154,22 @@ function ToeflQuestion(objQuestion) {
         item.answer.length = 0; //@todo
       }
     });
-  }
-  else {
+  }else if(this.questionType==='Sequence'){
+    var answer=[];
+    if(this.answer[0]){
+      for(var i=0;i<this.choices.length;i++){
+        if(this.choices[i].id==this.answer[0]){
+          answer.push(this.choices[i].key);
+          if(this.exampleChoices&&this.exampleChoices[0]){
+            this.exampleChoices[0]=this.choices[i].key;
+          }
+          break;
+        }
+      }
+    }
+    this.answer=answer;
+    numAnswers=this.choices.length;
+  }else{
     all_answers.push(this.answer);
     numAnswers = this.answer.length;
   }
@@ -167,7 +180,7 @@ function ToeflQuestion(objQuestion) {
     this.listenAgainNotice.text = strNotice.substring(strNotice.indexOf("src=\"") + 5, strNotice.indexOf("\" /"));
   }
   this.numAnswers = numAnswers;   // Never change this!
-  if (this.type == 'MultipleChoice' && this.numAnswers > 1) {
+  if (this.questionType == 'MultipleChoice' && this.numAnswers > 1) {
     this.answer.length = 0; // @todo
   }
   this.isAnswered = is_answered;

@@ -1,6 +1,6 @@
 <toefl-sound resource="question.questionSound" complete-event="question.sound-complete" replay-again="{{question.questionStartPoint}}"></toefl-sound>
 
-<div class="row" ng-switch on="question.type" style="margin-top: 40px;">
+<div class="row" ng-switch on="question.questionType" style="margin-top: 40px;">
   <div style="width: 100%; margin-left: auto; margin-right: auto;">
 
     <div class="row" ng-show="question.listenAgainNotice">
@@ -13,21 +13,21 @@
       <div ng-switch-when="MultipleChoice">
         <ol type="1" start="{{ question.number }}">
           <li>
-            <div class="question-description" style="font-size: 16px;" ng-bind-html="question.description"></div>
+            <div class="question-description" style="font-size: 16px;padding-left: 5px;" ng-bind-html="question.description"></div>
 
             <form class="answer-choices" ng-switch on="question.numAnswers" ng-show="showQuestionBody">
               <!-- 单选题 -->
-              <div ng-switch-when="1" class="checkbox" ng-repeat="choice in question.choices">
+              <div ng-switch-when="1" class="checkbox checkbox-calm" ng-repeat="choice in question.choices">
                 <label>
                   <input style="display: inline-block;" type="radio" ng-model="question.answer[0]" ng-value="choice.key">
-                  {{ choice.value }}
+                  <p class="option-style">{{ choice.value }}</p>
                 </label>
               </div>
               <!-- 多选题 -->
-              <div ng-switch-default class="checkbox" ng-repeat="choice in question.choices">
+              <div ng-switch-default class="checkbox checkbox-calm" ng-repeat="choice in question.choices">
                 <label>
                   <input style="display: inline-block" type="checkbox" checklist-model="question.answer" checklist-value="choice.id">
-                  {{ choice.value }}
+                  <p class="option-style">{{ choice.value }}</p>
                 </label>
               </div>
             </form>
@@ -38,31 +38,28 @@
       <div ng-switch-when="Sequence">
         <ol type="1" start="{{ question.number }}">
           <li>
-            <div class="question-description" ng-bind-html="question.description"></div>
+            <div class="question-description" style="font-size: 16px;padding-left: 8px;" ng-bind-html="question.description"></div>
           </li>
         </ol>
-
         <div ng-show="showQuestionBody">
-          <div class="text-center">
-            <span class="drag-drop-hint">Drag your answer choices to the spaces where they belong.</span>
+          <div class="checkbox checkbox-calm" ng-repeat="choice in question.choices">
+            <label>
+              <input type="checkbox"
+                     checklist-model="question.answer" checklist-value="choice.key"
+                     ng-disabled="question.showAnswer||question.exampleChoices[0]==choice.key">
+              <p class="option-style">{{ choice.value }}<span ng-show="question.showAnswer" style="border-radius:15px;font-size:16px;background-color:green;color:#fff">{{choice.rightAnswer}}</span> </p>
+            </label>
           </div>
-
-          <div class="drag-drop-container" question="question">
-            <div style="border: thin solid"><!-- drop targets -->
-              <ul>
-                <li ng-repeat="id in question.answer track by $index">
-                  <div class="drop-target" choiceid="id"></div>
-                </li>
-              </ul>
-            </div>
-
-            <div class="answer-choices">
-              <h4 class="text-center">Answer Choices</h4>
-              <ul>
-                <li ng-repeat="choice in question.choices">
-                  <div><label choice="choice" class="draggable-choice"></label></div>
-                </li>
-              </ul>
+          <div>
+            <div class="row">
+              <div class="col col-20">
+                排序
+              </div>
+              <div class="col col-60">
+                <i class="calm" ng-repeat="answer in question.answer track by $index">
+                  {{answer}}
+                </i>
+              </div>
             </div>
           </div>
         </div>

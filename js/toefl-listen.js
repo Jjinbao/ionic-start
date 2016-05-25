@@ -29,14 +29,13 @@ angular.module('app.listen-controllers', ['checklist-model'])
       $scope.$watchCollection('section', function(newVal) {
         if (newVal.uuid) {
           $scope.sences = make_up_route_sequence($scope.section);
-          $scope.question = $scope.section.units[0].questions[0];//init a question
           if (toeflClock) {
             toeflClock.timeLimit = $scope.section.timeLimit;
           }
         }
       });
 
-      sectionService.retrieve('48');
+      sectionService.retrieve('sequence');
 
       $scope.$on('toefl-clock', function(event, clock) {
         toeflClock = clock;
@@ -159,10 +158,9 @@ angular.module('app.listen-controllers', ['checklist-model'])
       $scope.$watchCollection('section', function(newVal) {
         if (newVal.uuid) {
           $scope.sences = make_up_route_sequence($scope.section);
-          console.log($scope.section);
         }
       });
-      sectionService.retrieve('48C1');
+      sectionService.retrieve('sequence');
 
       /*显示题干，开始做题*/
       $scope.$on('question.sound-complete', function() {
@@ -261,7 +259,6 @@ angular.module('app.listen-controllers', ['checklist-model'])
       $scope.correctAnswer = [];
       $scope.showAnswer = function() {
         $scope.question.showAnswer = true;
-        console.log($scope.question.answer);
       }
 
       //now question number
