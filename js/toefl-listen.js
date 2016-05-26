@@ -186,7 +186,7 @@ angular.module('app.listen-controllers', ['checklist-model'])
           $scope.sences = make_up_route_sequence($scope.section);
         }
       });
-      sectionService.retrieve('table');
+      sectionService.retrieve('sequence');
 
       /*显示题干，开始做题*/
       $scope.$on('question.sound-complete', function() {

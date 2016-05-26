@@ -44,7 +44,7 @@
     margin-right: 0px;
     width: 100%;
     height: 2px;
-    background: white;
+    background: grey;
     border-left: 1px solid transparent;
     border-right: 1px solid transparent;
     border-radius: 10px;
@@ -79,11 +79,12 @@
     font-size:30px;
     color: #f0ad4e;
     position: absolute;
-    top:50%;
+    top:15%;
     left:50%;
     margin-top: 6px;
 }
 .progress .orange {
+    height: 2px;
     background: #f2b63c;
     border-color: #f0ad24 #eba310 #c5880d;
     background-image: -webkit-linear-gradient(top, #f8da9c 0%, #f5c462 70%, #f2b63c 100%);
@@ -117,6 +118,101 @@
     position: absolute;
     height: 4px;
     transition: all 0.8s ease;
-    background-color: #3acbf5;
+    background-color: #f2b63c;
 }
 /*end preload bar*/
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+        -webkit-transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+        -webkit-transform: rotate(360deg);
+    }
+}
+@-webkit-keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+        -webkit-transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+        -webkit-transform: rotate(360deg);
+    }
+}
+@keyframes flash {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+@-webkit-keyframes flash {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+.modal {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    display: block !important;
+    left: 0;
+    top: 0;
+    background: rgba(0, 0, 0, 0.2);
+    z-index: 1001;
+}
+.modal > .loading {
+    border-radius: 4px;
+    -webkit-border-radius: 4px;
+    display: table;
+    width: 200px;
+    height: 200px;
+    position: absolute;
+    left: 50%;
+    top: 40%;
+    margin-top: -100px;
+    margin-left: -100px;
+}
+.modal > .loading .circle {
+    border-radius: 182px;
+    -webkit-border-radius: 182px;
+    animation: rotate 2s linear infinite;
+    -webkit-animation: rotate 2s linear infinite;
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    border: 2px solid white;
+    top: 40%;
+    left: 50%;
+    margin-left: -90px;
+    margin-top: -90px;
+}
+.modal > .loading .circle > .point {
+    border-radius: 16px;
+    -webkit-border-radius: 16px;
+    width: 16px;
+    height: 16px;
+    display: block;
+    position: absolute;
+    background: white;
+    left: 50%;
+    top: 0;
+    margin-left: -8px;
+    margin-top: -8px;
+}
+.modal > .loading > .text {
+    display: table-cell;
+
+    text-align: center;
+    color: white;
+    opacity: 1;
+    padding-top: 70px;
+}

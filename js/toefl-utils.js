@@ -409,10 +409,10 @@ angular.module('toefl.utils', ['ngAudio'])
         $scope.$watchCollection('section', function(newVal) {
           if (newVal && newVal.uuid) {
             var title = newVal.title;
-            if (title.indexOf('Listening') >= 0) {
-              $scope.resUrl = getListenUrl(newVal);
-            } else {
+            if (title.indexOf('Speaking') >= 0) {
               $scope.resUrl = getSpeakingUrl(newVal);
+            } else {
+              $scope.resUrl = getListenUrl(newVal);
             }
 
             $scope.preload = new createjs.LoadQueue(true);
@@ -420,8 +420,8 @@ angular.module('toefl.utils', ['ngAudio'])
             $scope.preload.installPlugin(createjs.Sound);
             //$scope.preload.on("fileload", handleFileLoad);
             $scope.preload.on("progress", function(event) {
-              myBarWidth=$scope.preload.progress*100;
-              $scope.barWidth={width:myBarWidth+'%'};
+              myBarWidth=parseInt($scope.preload.progress*100);
+              $scope.barWidth=myBarWidth+'%';
             });
             $scope.preload.on("complete", function(event) {
               $scope.barWidth={width:'100%'};
@@ -462,6 +462,7 @@ angular.module('toefl.utils', ['ngAudio'])
               }
             })
           });
+          console.log(resUrl);
           return resUrl;
         }
 
@@ -495,6 +496,6 @@ angular.module('toefl.utils', ['ngAudio'])
           }
         });
       },
-      template: '<div class="progress-back"><div class="progress-bar" ng-style="barWidth"></div></div>'
+      templateUrl: 'templates/pre-load-template.html'
     }
   }])

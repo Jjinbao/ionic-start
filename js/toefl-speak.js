@@ -45,11 +45,12 @@ angular.module('app.speak-controllers', [])
       $scope.$watchCollection('section', function(section) {
         if (section && section.uuid) {
           $scope.unit = $scope.section.units[0];
+          console.log(section);
           route_sequence = make_up_route_sequence($scope.unit);
         }
       });
 
-      sectionService.retrieve('speak1');
+      sectionService.retrieve('speak3');
 
       //get clock
       $scope.$on('toefl-clock', function(event, clock) {
