@@ -49,7 +49,7 @@ angular.module('app.speak-controllers', [])
         }
       });
 
-      sectionService.retrieve('speak3');
+      sectionService.retrieve('speak1');
 
       //get clock
       $scope.$on('toefl-clock', function(event, clock) {
@@ -149,5 +149,15 @@ angular.module('app.speak-controllers', [])
         }
         $state.go('tabs.speak-page.son', {template: obj});
       };
+
+      $scope.recordAgain=function(){
+        $scope.questionLimit = $scope.unit.preparingTime;
+        $scope.recordTime = format_remaining_seconds($scope.questionLimit);
+        $scope.saveDataShow = true;
+        $scope.iconType = "ion-android-bulb";
+        selectSound=0;
+        $scope.questionSound=$scope.unit.questionSound;
+
+      }
     }
   ])

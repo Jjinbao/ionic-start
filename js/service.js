@@ -28,10 +28,9 @@ angular.module('toefl.service', ['ngResource'])
               value = new ToeflReadingSection(value);
             }
             else if (value.type === 'ToeflListeningSection') {
-              console.log(value);
               value = new ToeflListeningSection(value);
             }
-            else if (value.type === 'Speaking') {
+            else if (value.type === 'ToeflSpeakingSection') {
               value = new ToeflSpeakingSection(value);
             }
             else if (value.type === 'Writing') {
@@ -233,6 +232,7 @@ function ToeflSpeakingSection(objSection) {
 }
 
 function ToeflSpeakingTask(speakingUnit) {
+  console.log(speakingUnit);
   this.uuid = speakingUnit.uuid;
   this.number = speakingUnit.number;
   this.type = speakingUnit.type;
@@ -242,9 +242,8 @@ function ToeflSpeakingTask(speakingUnit) {
     this.questionIntro = intro.substring(intro.indexOf("src=\"") + 5, intro.indexOf("\" /"));
   }
   this.questionIntroSound = speakingUnit.questionIntro.sound;
-  if (speakingUnit.listeningScene && speakingUnit.listeningScene.length != 0) {
-    this.listenScene = speakingUnit.listeningScene[0];
-  }
+  this.listenScene = speakingUnit.listeningScene;
+
   this.listeningSound = speakingUnit.listeningSound;
   this.preparingTime = speakingUnit.preparingTime;
   this.responseTime = speakingUnit.responseTime;

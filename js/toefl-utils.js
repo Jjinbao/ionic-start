@@ -201,7 +201,6 @@ angular.module('toefl.utils', ['ngAudio'])
           if (remaining_seconds <= 0) {
             remaining_seconds = 0;
             cancel_interval();
-            $scope.$emit('section.timeout');
           }
           $scope.showClock(remaining_seconds);
 
